@@ -47,29 +47,24 @@ function abs(x) {
 /////////  Magic Math  //////////
 /////////////////////////////////
 function f_c(z, c) {
-    // TODO 1.4a):      Compute the result of function f_c for a given z and
-    //                  a given c. Use the helper functions.
-
-
-
+    return add(mult(z, z), c);
 }
 
 function countIterations(start_z, c, max_iter) {
+    var z = start_z;
+    var iter = 0;
 
-    // TODO 1.4a):      Count iterations needed for the sequence to diverge.
-    //                  z is declared diverged as soon as its absolute value
-    //                  exceeds 2. If the sequence does not diverge during
-    //                  the first max_iter iterations, return max_iter. Use
-    //                  function f_c().
-
-
+    while(abs(z) < 2.0 && iter < max_iter) {
+        z = f_c(z, c);
+        iter++;
+    }
 
     // TODO 1.4b):      Change the return value of this function to avoid
     //                  banding. Return the unchanged number of iterations
     //                  for abs(z) < 1;
 
 
-
+    return iter;
 }
 
 
@@ -91,11 +86,11 @@ function getColorForIter(iter) {
     // return color according to chosen color scheme
     var color = [128, 128, 128];
     if (colorscheme == "black & white") {
-        // TODO 1.4a):      Return the correct color for the iteration count
-        //                  stored in iter. Pixels corresponding to complex
-        //                  numbers for which the sequence diverges should be
-        //                  shaded white. Use the global variable max_iter.
-
+        if(iter >= max_iter) {
+            return [0, 0, 0];
+        } else {
+            return [255, 255, 255];
+        }
 
 
     } else if (colorscheme == "greyscale") {
@@ -160,14 +155,9 @@ function mandelbrotSet(image) {
         var x = pixel % image.width;
         var y = image.height - pixel / image.width;
 
+        var z = new ComplexNumber(0, 0);
         var c = new ComplexNumberFromCoords(x, y, 'mandelbrot_canvas');
-
-        // TODO 1.4a):      Replace the following line by creation of the
-        //                  Mandelbrot set. Use functions countIterations() 
-        //                  getColorForIter().
-        var rgb = [(c.re + 0.5) * 255, (c.im + 0.5) * 255, 0];
-
-
+        var rgb = getColorForIter(countIterations(z, c, max_iter));
 
         image.data[i] = rgb[0];
         image.data[i + 1] = rgb[1];
