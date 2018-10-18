@@ -52,19 +52,20 @@ function f_c(z, c) {
 
 function countIterations(start_z, c, max_iter) {
     var z = start_z;
+    var abs_z = abs(z);
     var iter = 0;
 
-    while(abs(z) < 2.0 && iter < max_iter) {
+    while(abs_z < 2.0 && iter < max_iter) {
         z = f_c(z, c);
+        abs_z = abs(z);
         iter++;
     }
 
-    // TODO 1.4b):      Change the return value of this function to avoid
-    //                  banding. Return the unchanged number of iterations
-    //                  for abs(z) < 1;
+    if(abs_z < 1.0) {
+      return iter;
+    }
 
-
-    return iter;
+    return iter + 1 - Math.log(Math.log(abs_z)) / Math.log(2);
 }
 
 
