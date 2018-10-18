@@ -75,6 +75,7 @@ function getColorForIter(iter) {
 
     // find out which radio button is checked, i.e. which color scheme is picked
     var colorscheme;
+    var colorlevel;
     var radios = document.getElementsByName('colors');
     for (var i = 0; i < radios.length; i++) {
         if (radios[i].checked) {
@@ -83,45 +84,30 @@ function getColorForIter(iter) {
         }
     }
 
+    if(iter >= max_iter) {
+        return [0, 0, 0];
+    }
+
+    // color level based on the number of iterations
+    color_level = (1.0 - (iter / max_iter)) * 255;
+
     // return color according to chosen color scheme
     var color = [128, 128, 128];
     if (colorscheme == "black & white") {
-        if(iter >= max_iter) {
-            return [0, 0, 0];
-        } else {
-            return [255, 255, 255];
+        return [255, 255, 255];
+    } else if (colorscheme == "greyscale") {
+        return [color_level, color_level, color_level];
+    } else if (colorscheme == "underwater") {
+        return [0, 255 - color_level, color_level];
+    } else { // rainbow
+        // hue level based on the number of iterations
+        hue_level = ((iter / max_iter) * 360.0) + 240.0;
+
+        if(hue_level > 360.0) {
+          hue_level -= 360.0;
         }
 
-
-    } else if (colorscheme == "greyscale") {
-        // TODO 1.4b):      Choose a greyscale color according to the given
-        //                  iteration count in relation to the maximum
-        //                  iteration count. The more iterations are needed
-        //                  for divergence, the darker the color should be.
-        //                  Be aware of integer division!
-
-
-
-    } else if (colorscheme == "underwater") {
-        // TODO 1.4b):      Choose a color between blue and green according
-        //                  to the given iteration count in relation to the
-        //                  maximum iteration count. The more iterations are
-        //                  needed for divergence, the more green and less
-        //                  blue the color should be.
-
-
-
-    } else { // rainbow
-        // TODO 1.4b):      Choose a rainbow color according to the given
-        //                  iteration count in relation to the maximum
-        //                  iteration count. Colors should change from blue
-        //                  (for very few needed iterations) over violet, pink,
-        //                  red, yellow and green back to blue (for lots of
-        //                  needed iterations). Use the HSV model and convert
-        //                  HSV to RGB colors using function hsv2rgb.
-
-
-
+        return hsv2rgb([hue_level, 1.0, 1.0])
     }
 
     return color;
@@ -130,16 +116,33 @@ function getColorForIter(iter) {
 
 
 function hsv2rgb(hsv) {
-
     var h = hsv[0];
     var s = hsv[1];
     var v = hsv[2];
 
-    // TODO 1.4b):      Replace the following line by code performing the
-    //                  HSV to RGB convertion known from the lecture.
-    var rgb = [255, 255, 255];
+    var c = v * s;
+    var m = v - c;
+    var x = c * (1 - Math.abs(((h / 60) % 2) - 1));
 
+    rgb = [m, m, m]
 
+    if(h < 60) {
+      rgb[0] += c, rgb[1] += x;
+    } else if(h < 120) {
+      rgb[0] += x, rgb[1] += c;
+    } else if(h < 180) {
+      rgb[1] += c, rgb[2] += x;
+    } else if(h < 240) {
+      rgb[1] += x, rgb[2] += c;
+    } else if(h < 300) {
+      rgb[0] += x, rgb[2] += c;
+    } else if(h < 360) {
+      rgb[0] += c, rgb[2] += x;
+    }
+
+    rgb[0] *= 255;
+    rgb[1] *= 255;
+    rgb[2] *= 255;
 
     return rgb;
 }
