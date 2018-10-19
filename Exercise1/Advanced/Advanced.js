@@ -270,11 +270,7 @@ function setupMandelbrot(canvas) {
     canvas.addEventListener('mousedown', onMouseDown, false);
     canvas.addEventListener('mousemove', onMouseMove, false);
     canvas.addEventListener('mouseup', onMouseUp, false);
-
-
-    // TODO 1.4c):      Uncomment the following line to enable zooming.
-
-    //canvas.addEventListener('DOMMouseScroll', onMouseWheel, false);
+    canvas.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 }
 
@@ -316,13 +312,8 @@ function onMouseDown(e) {
             loopVariable = 0;
         }
     } else {
-        // TODO 1.4c):      Store the hit point as pixel coordinates and
-        //                  start the dragging process. Use the global
-        //                  variables dragging (bool) and lastPoint (two
-        //                  dimensional vector).
-
-
-
+        lastPoint = [x, y];
+        dragging = true;
     }
 
 }
@@ -344,14 +335,11 @@ function onMouseMove(e) {
         var y = e.clientY - rect.top;
         y = canvas.height - y;
 
-        // TODO 1.4c):      Convert both last and current hit point to
-        //                  their corresponding complex numbers, compute
-        //                  their distance (also as a complex number) and
-        //                  shift the plane accordingly. To do so, change
-        //                  the global variable center which is used to
-        //                  compute the complex number corresponding to a pixel.
+        var moveFactor = 100.0;
+        var lastPointCoord = new ComplexNumber(lastPoint[0] / moveFactor, lastPoint[1] / moveFactor);
+        var currentPointCoord = new ComplexNumber(x / moveFactor, y / moveFactor);
 
-
+        center = add(center, sub(lastPointCoord, currentPointCoord));
 
         // rerender image
         RenderMandelbrotSet();
@@ -359,11 +347,7 @@ function onMouseMove(e) {
 }
 
 function onMouseUp(e) {
-    // TODO 1.4c):      Prevent dragging of the plane once the mouse is
-    //                  not pressed anymore.
-
-
-
+    dragging = false;
 }
 
 function onMouseWheel(e) {
