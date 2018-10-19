@@ -177,13 +177,9 @@ function juliaSet(image) {
         var x = pixel % image.width;
         var y = image.height - pixel / image.width;
 
-        // TODO 1.4d):       Replace the following line by creation of the
-        //                  Julia set for c = juliaC (global variable). Use
-        //                  functions ComplexNumber(),
-        //                  countIterations() and getColorForIter().
-        var rgb = [128, 128, 128];
-
-
+        var z = new ComplexNumberFromCoords(x, y, 'julia_canvas');
+        var c = juliaC;
+        var rgb = getColorForIter(countIterations(z, c, max_iter));
 
         image.data[i] = rgb[0];
         image.data[i + 1] = rgb[1];
