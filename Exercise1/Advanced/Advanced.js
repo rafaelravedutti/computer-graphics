@@ -102,7 +102,7 @@ function getColorForIter(iter) {
         return [0, 255 - color_level, color_level];
     } else { // rainbow
         // hue level based on the number of iterations
-        hue_level = ((iter / max_iter) * 360.0) + 240.0;
+        hue_level = ((iter / max_iter) * 360.0) + 180.0;
 
         if(hue_level > 360.0) {
           hue_level -= 360.0;
