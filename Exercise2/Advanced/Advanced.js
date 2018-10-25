@@ -96,49 +96,54 @@ function scanline(image, polygon) {
     var edgeTable = new EdgeTable(polygon);
     var activeEdgeTable = new ActiveEdgeTable();
 
-    // TODO 2.3     Perform the scanline algorithm 
-    //              by following the single comments.
-    //              In order to reach the full number of
-    //              points, you only have to do the man-
-    //              datory part.
-
     for (var y_scanline = 0; y_scanline < image.height; y_scanline++) {
-        // [optimization]
-        // if the active edge table is empty (nEntries==0) we can step to the next edge, i.e. we can set y_scanline = myEdgeTableEntry.y_lower
-        // note that the edge table is sorted by y_lower!
+        if(activeEdgeTable.nEntries == 0) {
+            var i = 0;
+            var next_edge = image.height;
 
+            while(i < edgeTable.nEntries) {
+                if(edgeTable.entries[i].y_lower >= y_scanline) {
+                    next_edge = edgeTable.entries[i].y_lower;
+                    break;
+                }
 
+                i++;
+            }
 
-        // [mandatory]
-        // as we cannot delete entries from the active edge table:
-        // - build a new active edge table
-        // - copy all those edges from the previous active edge table which should still be in the active edge table for this scanline
-        // - assign the new active edge table to activeEdgeTable
+            y_scanline = next_edge;
+        }
 
+        var activeEdgeTableDup = new ActiveEdgeTable();
 
+        for(var i = 0; i < activeEdgeTable.nEntries; i++) {
+            if(activeEdgeTable.entries[i].y_upper > y_scanline) {
+                activeEdgeTableDup.entries.push(activeEdgeTable.entries[i]);
+                activeEdgeTableDup.nEntries++;
+            }
+        }
 
-        // [mandatory]
-        // add new edges from the edge table to the active edge table
+        activeEdgeTable = activeEdgeTableDup;
 
+        for(var i = 0; i < edgeTable.nEntries; i++) {
+            if(edgeTable.entries[i].y_lower == y_scanline) {
+                activeEdgeTable.entries.push(new ActiveEdgeTableEntry(edgeTable.entries[i]));
+                activeEdgeTable.nEntries++;
+            }
+        }
 
+        activeEdgeTable.entries.sort(compareActiveEdgeTableEntries);
+        console.log(activeEdgeTable);
 
-        // [mandatory]
-        // sort the active edge table along x (use the array sort function with compareActiveEdgeTableEntries as compare function)
+        for(var i = 0; i < activeEdgeTable.nEntries - 1; i += 2) {
+            for(var x = Math.floor(activeEdgeTable.entries[i].x_intersect); x <= Math.floor(activeEdgeTable.entries[i + 1].x_intersect); x++) {
+                setPixel(image, new Point(x, y_scanline), polygon.color);
+            }
+        }
 
-
-
-        // [mandatory]
-        // rasterize the line:
-        // for every two successive active edge entries set the pixels in between the x intersections (the first and the second entry build a line segment, the third and the fourth build a line segment and so on)
-        // note that setPixel() requires integer pixel coordinates!
-
-
-
-        // [mandatory]
-        // update the x_intersect of the active edge table entries
-
-
-
+        for(var i = 0; i < activeEdgeTable.nEntries; i++) {
+            activeEdgeTable.entries[i].x_intersect += 
+              activeEdgeTable.entries[i].invSlope;
+        }
     }
 }
 
