@@ -125,13 +125,16 @@ function scanline(image, polygon) {
         activeEdgeTable = activeEdgeTableDup;
 
         for(var i = 0; i < edgeTable.nEntries; i++) {
-            if(edgeTable.entries[i].y_lower == y_scanline) {
+            if(edgeTable.entries[i].y_lower == y_scanline && edgeTable.entries[i].y_upper != y_scanline) {
                 activeEdgeTable.entries.push(new ActiveEdgeTableEntry(edgeTable.entries[i]));
                 activeEdgeTable.nEntries++;
             }
         }
 
         activeEdgeTable.entries.sort(compareActiveEdgeTableEntries);
+
+        console.log(y_scanline);
+        console.log(activeEdgeTable);
 
         for(var i = 0; i < activeEdgeTable.nEntries - 1; i += 2) {
             for(var x = Math.floor(activeEdgeTable.entries[i].x_intersect); x <= Math.floor(activeEdgeTable.entries[i + 1].x_intersect); x++) {
@@ -141,7 +144,7 @@ function scanline(image, polygon) {
 
         for(var i = 0; i < activeEdgeTable.nEntries; i++) {
             activeEdgeTable.entries[i].x_intersect += 
-              activeEdgeTable.entries[i].invSlope;
+                activeEdgeTable.entries[i].invSlope;
         }
     }
 }
