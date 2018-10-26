@@ -133,9 +133,6 @@ function scanline(image, polygon) {
 
         activeEdgeTable.entries.sort(compareActiveEdgeTableEntries);
 
-        console.log(y_scanline);
-        console.log(activeEdgeTable);
-
         for(var i = 0; i < activeEdgeTable.nEntries - 1; i += 2) {
             for(var x = Math.floor(activeEdgeTable.entries[i].x_intersect); x <= Math.floor(activeEdgeTable.entries[i + 1].x_intersect); x++) {
                 setPixel(image, new Point(x, y_scanline), polygon.color);
