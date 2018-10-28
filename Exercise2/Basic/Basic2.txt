@@ -1,6 +1,8 @@
 Pro:
-- 
+- Very easy to implement and understand.
+- Flexible, because it can fill any kind of shape
+  (depending on the neighbor strategy).
 
 Cons:
-- 
-- 
+- Costly, because of the recursion.
+-

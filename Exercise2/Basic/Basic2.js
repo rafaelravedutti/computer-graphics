@@ -31,30 +31,31 @@ function onMouseDownCanvas2(e) {
 ///////////////////////////////
 function floodFill4(image, pixel, fillColor) {
 
-    // TODO 2.2a)       Perform the flood fill algorithm,
-    //                  taking into account only the four 
-    //                  direct neighbours of the pixel. The
-    //                  variable "fillColor" denotes the color
-    //                  for both the area and the border.
 
     // get the color at pixel location, use getPixel()
+    var baseColor = getPixel(image, pixel)
 
-
-
-    // base case 
+    // base case
     //       - color channels of the current color are equal to the color channels of the fillColor
     //       - pixel position is out of range
-
-
+    if(baseColor == null || (baseColor.r === fillColor.r &&
+      baseColor.g === fillColor.g && baseColor.b === fillColor.b))
+      return;
 
     // set pixel color
-
+    setPixel(image, pixel, fillColor)
 
 
     // start recursion (4 neighboring pixels)
+    floodFill4(image, new Point(pixel.x + 1, pixel.y), fillColor)
 
+    floodFill4(image, new Point(pixel.x - 1, pixel.y), fillColor)
 
+    floodFill4(image, new Point(pixel.x, pixel.y + 1), fillColor)
 
+    floodFill4(image, new Point(pixel.x, pixel.y - 1), fillColor)
+
+    return;
 }
 
 //////////////////////////
