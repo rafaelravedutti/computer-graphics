@@ -63,33 +63,16 @@ function bresenham(image, line) {
     var x1 = Math.floor(line.endPoint.x);
     var y1 = Math.floor(line.endPoint.y);
 
-    // TODO 2.1     Write code to draw a line
-    //              between the start point and
-    //              the end point. To make things
-    //              easier, there are some comments
-    //              on what to do next:
-
     // compute deltas and update directions
-
-
-    // set initial coordinates
     var deltax = Math.abs(x1 - x0), movementx = x0 < x1 ? 1 : -1;
     var deltay = Math.abs(y1 - y0), movementy = y0 < y1 ? 1 : -1;
+
+    // set initial coordinates
     var err = (deltax > deltay ? deltax : -deltay)/2;
     var e2;
 
-
-    // start loop to set nPixels
-    var intx0 = Math.floor(x0);
-    var intx1 = Math.floor(x1);
-    var inty0 = Math.floor(y0);
-    var inty1 = Math.floor(y1);
-
-     var nPixels = Math.abs(x1 - x0) + Math.abs(y1 - y0)
-    // Math.floor(Math.sqrt((intx1 - intx0)*(intx1 - intx0) + (inty1 - inty0)*(inty1 - inty0)));
-    // console.log(nPixels);
-    // console.log(line.startPoint)
-    // console.log(line.endPoint);
+    // number of pixels
+    var nPixels = (deltax > deltay) ? deltax : deltay;
 
     for (var i = 0; i < nPixels; ++i) {
         // set pixel using the helper function setPixelS()
