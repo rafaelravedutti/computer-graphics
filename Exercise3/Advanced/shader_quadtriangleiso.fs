@@ -51,12 +51,16 @@ void main(void)
 	//				pixels distance.
 
   vec2 ap = vec2(gl_FragCoord.x - pointA.x, gl_FragCoord.y - pointA.y);
-  bool cond = (pointB.x - pointA.x) * ap.y - (pointB.y - pointA.y) * ap.x > 0.0;
+  vec2 bp = vec2(gl_FragCoord.x - pointB.x, gl_FragCoord.y - pointB.y);
 
-  if((pointC.x - pointA.x) * ap.y - (pointC.y - pointA.y) * ap.x > 0.0 == cond) {
+  bool cond_ba = (pointB.x - pointA.x) * ap.y - (pointB.y - pointA.y) * ap.x > 0.0;
+  bool cond_ca = (pointC.x - pointA.x) * ap.y - (pointC.y - pointA.y) * ap.x > 0.0;
+  bool cond_cb = (pointC.x - pointB.x) * bp.y - (pointC.y - pointB.y) * bp.x > 0.0;
+
+  if(cond_ca == cond_ba) {
     discard;
   } else {
-    if((pointC.x - pointB.x) * (gl_FragCoord.y - pointB.y) - (pointC.y - pointB.y) * (gl_FragCoord.x - pointB.x) > 0.0 != cond) {
+    if(cond_cb != cond_ba) {
       discard;
     } else {
       vec2 point = vec2(gl_FragCoord.x, gl_FragCoord.y);
