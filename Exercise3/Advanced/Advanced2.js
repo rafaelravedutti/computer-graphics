@@ -116,14 +116,18 @@ var Advanced2 = function () {
         //              array to see which vertex has which
         //              index in the array!
 
-        indices.push(32);
-        indices.push(5981);
-        indices.push(2347);
 
-        indices.push(704);
-        indices.push(3957);
-        indices.push(4927);
+        for(var i = 0; i < nodes - 1; i++) {
+            for(var j = 0; j < nodes - 1; j++) {
+                indices.push(i * nodes + j);
+                indices.push(i * nodes + j + 1);
+                indices.push((i + 1) * nodes + j);
 
+                indices.push((i + 1) * nodes + (j + 1));
+                indices.push(i * nodes + j + 1);
+                indices.push((i + 1) * nodes + j);
+            }
+        }
 
         // create vertex buffer on the gpu
         vbo = gl.createBuffer();
