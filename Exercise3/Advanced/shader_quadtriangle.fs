@@ -5,13 +5,18 @@ uniform vec2 pointA;
 uniform vec2 pointB;
 uniform vec2 pointC;
 
-
 void main(void)
 {
-	// TODO 3.4)	Use the fragment coordinate (gl_FragCoord) and
-	//				clip it against the triangle that is defined by
-	//				the three points A, B and C. If the fragment lies
-	//				in the triangle set the gl_FragColor to the uniform
-	//				color, otherwise discard the fragment (using "discard;")
-	discard;
+  vec2 ap = vec2(gl_FragCoord.x - pointA.x, gl_FragCoord.y - pointA.y);
+  bool cond = (pointB.x - pointA.x) * ap.y - (pointB.y - pointA.y) * ap.x > 0.0;
+
+  if((pointC.x - pointA.x) * ap.y - (pointC.y - pointA.y) * ap.x > 0.0 == cond) {
+    discard;
+  } else {
+    if((pointC.x - pointB.x) * (gl_FragCoord.y - pointB.y) - (pointC.y - pointB.y) * (gl_FragCoord.x - pointB.x) > 0.0 != cond) {
+      discard;
+    } else {
+      gl_FragColor = vec4(color, 1);
+    }
+  }
 }
