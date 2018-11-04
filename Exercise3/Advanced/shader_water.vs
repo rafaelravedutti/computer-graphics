@@ -17,24 +17,21 @@ float rand(vec2 co) {
 
 void main(void)
 {
+  float amplitude = 0.5 * rand(vec2(vVertex.x, vVertex.z));
+  float period = rand(vec2(vVertex.z, vVertex.x));
 
-	float amplitude = 0.5 * rand(vec2(vVertex.x, vVertex.z));
-	float period = rand(vec2(vVertex.z, vVertex.x));
+  // TODO 3.5b)	Replace the following by code to
+  //				alter the vertex position over time.
+  //				Change the y value by a sine function
+  //				offset.
+  //				Each vertex has its own amplitude and
+  //				period.
+  vec3 p = vVertex;
 
-	// TODO 3.5b)	Replace the following by code to
-	//				alter the vertex position over time.
-	//				Change the y value by a sine function
-	//				offset.
-	//				Each vertex has its own amplitude and 
-	//				period.
-	vec3 p = vVertex;
+  p.y = rand(vec2(time, period)) * amplitude; 
 
+  gl_Position = MVP * vec4(p, 1);
 
-
-	gl_Position = MVP * vec4(p, 1);
-
-	vec4 pos = vec4(p, 1);
-	position = pos.xyz / pos.w;
-
-
+  vec4 pos = vec4(p, 1);
+  position = pos.xyz / pos.w;
 }
