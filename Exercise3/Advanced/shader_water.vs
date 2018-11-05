@@ -28,7 +28,7 @@ void main(void)
   //				period.
   vec3 p = vVertex;
 
-  p.y = rand(vec2(time, period)) * amplitude; 
+  p.y = amplitude * rand(vec2(period, time / 15000000.0)) - 0.5; 
 
   gl_Position = MVP * vec4(p, 1);
 
