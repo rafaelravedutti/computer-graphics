@@ -16,48 +16,49 @@ function webGLStart(canvas) {
                      .5, -.5, 0,  255,   0,
                      0, .5,   0,    0, 255];
 
+
+    //Algorithm to calculate the barycentric coordinates                 
     var a = [-.5, -.5, 255,  0,   0], b = [.5, -.5, 0,  255,   0], c = [ 0, .5,   0,    0, 255];
 
     var alpha, beta, gama;
 
-    console.log(canvas.width)
-    console.log(canvas.height)
-    var bc1 = b[1] - c[1], cb0 = c[0] - b[0], ac0 = a[0] - c[0], ac1 = a[1] - c[1];
-    var ca1 = c[1] - a[1], div = bc1 * ac0 + cb0 * ac1;
-    for(let i = 0; i < canvas.width; ++i){
-      for(let j = 0; j < canvas.height; ++j){
 
-        // calcula distancia barycentrica
-        ic0 = i - c[0];
-        alpha = (bc1 * ic0 + cb0 * (j - c[1])) / div;
-        beta = (ca1 * ic0 + ac0 * (j - c[1])) / div;
-        gama = 1.0 - alpha - beta;
 
-        // if its a point inside the triangle, then insert it.
-        if(!((!isNaN(alpha) && alpha < 0.0) || (!isNaN(beta) && beta < 0.0) || ((!isNaN(gama) && gama < 0.0)))){
-          vertices.push(i, j, alpha*a[2] + beta*b[2] + gama*c[2], alpha*a[3] + beta*b[3] + gama*c[3], alpha*a[4] + beta*b[4] + gama*c[4]);
-          // vertices.push(j);
-          // // P_RED_intensity = alpha*a[RED] + beta*b[RED] + gama*c[RED]
-          // vertices.push(alpha*a[2] + beta*b[2] + gama*c[2]);
-          // // P_GREEN_intensity = alpha*a[GREEN] + beta*b[GREEN] + gama*c[GREEN]
-          // vertices.push(alpha*a[3] + beta*b[3] + gama*c[3]);
-          // // P_BLUE_intensity = alpha*a[BLUE] + beta*b[BLUE] + gama*c[BLUE]
-          // vertices.push(alpha*a[4] + beta*b[4] + gama*c[4]);
-        }
-        else{
-          vertices.push(i);
-          vertices.push(j);
-          // P_RED_intensity = alpha*a[RED] + beta*b[RED] + gama*c[RED]
-          vertices.push(255);
-          // P_GREEN_intensity = alpha*a[GREEN] + beta*b[GREEN] + gama*c[GREEN]
-          vertices.push(255);
-          // P_BLUE_intensity = alpha*a[BLUE] + beta*b[BLUE] + gama*c[BLUE]
-          vertices.push(255);
-        }
-      }
-
-    }
-    console.log(vertices);
+    // var bc1 = b[1] - c[1], cb0 = c[0] - b[0], ac0 = a[0] - c[0], ac1 = a[1] - c[1];
+    // var ca1 = c[1] - a[1], div = bc1 * ac0 + cb0 * ac1;
+    // for(let i = 0; i < canvas.width; ++i){
+    //   for(let j = 0; j < canvas.height; ++j){
+    //
+    //     // calcula distancia barycentrica
+    //     ic0 = i - c[0];
+    //     alpha = (bc1 * ic0 + cb0 * (j - c[1])) / div;
+    //     beta = (ca1 * ic0 + ac0 * (j - c[1])) / div;
+    //     gama = 1.0 - alpha - beta;
+    //
+    //     // if its a point inside the triangle, then insert it.
+    //     if(!((!isNaN(alpha) && alpha < 0.0) || (!isNaN(beta) && beta < 0.0) || ((!isNaN(gama) && gama < 0.0)))){
+    //       vertices.push(i, j, alpha*a[2] + beta*b[2] + gama*c[2], alpha*a[3] + beta*b[3] + gama*c[3], alpha*a[4] + beta*b[4] + gama*c[4]);
+    //       // vertices.push(j);
+    //       // // P_RED_intensity = alpha*a[RED] + beta*b[RED] + gama*c[RED]
+    //       // vertices.push(alpha*a[2] + beta*b[2] + gama*c[2]);
+    //       // // P_GREEN_intensity = alpha*a[GREEN] + beta*b[GREEN] + gama*c[GREEN]
+    //       // vertices.push(alpha*a[3] + beta*b[3] + gama*c[3]);
+    //       // // P_BLUE_intensity = alpha*a[BLUE] + beta*b[BLUE] + gama*c[BLUE]
+    //       // vertices.push(alpha*a[4] + beta*b[4] + gama*c[4]);
+    //     }
+    //     else{
+    //       vertices.push(i);
+    //       vertices.push(j);
+    //       // P_RED_intensity = alpha*a[RED] + beta*b[RED] + gama*c[RED]
+    //       vertices.push(255);
+    //       // P_GREEN_intensity = alpha*a[GREEN] + beta*b[GREEN] + gama*c[GREEN]
+    //       vertices.push(255);
+    //       // P_BLUE_intensity = alpha*a[BLUE] + beta*b[BLUE] + gama*c[BLUE]
+    //       vertices.push(255);
+    //     }
+    //   }
+    //
+    // }
 
 
     var indices = [0, 1, 2];
