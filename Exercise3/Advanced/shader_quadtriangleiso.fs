@@ -67,20 +67,10 @@ void main(void)
       float d_ab = point_to_edge_distance(point, pointA, pointB);
       float d_ac = point_to_edge_distance(point, pointA, pointC);
       float d_bc = point_to_edge_distance(point, pointB, pointC);
-      float min_d = d_ab;
-
-      if(min_d > d_ac) {
-        min_d = d_ac;
-      }
-
-      if(min_d > d_bc) {
-        min_d = d_bc;
-      }
-
-      min_d /= 14.0;
-      min_d -= floor(min_d);
-
-      if(min_d < 0.1) {
+      float min_d = min(d_ab, min(d_ac, d_bc));
+      float next_isoline = floor(min_d / 14.0) * 14.0;
+      
+      if(abs(min_d - next_isoline) < 1.0) {
         gl_FragColor = mix(vec4(color, 1), vec4(0, 0, 0, 1), 0.5);
       } else {
         gl_FragColor = vec4(color, 1);
