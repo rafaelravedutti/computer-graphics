@@ -40,16 +40,6 @@ float point_to_edge_distance(vec2 point, vec2 edgeA, vec2 edgeB) {
 void main(void)
 {
 
-	// TODO 3.4)	Use the fragment coordinate (gl_FragCoord) and clip
-	//				it against the triangle that is defined by the three
-	//				points A,B and C. If the fragment lies in the triangle
-	//				set the gl_FragColor, otherwise discard the fragment
-	//				(using "discard;"). If the fragment is inside the triangle
-	//				and in the range of a iso line (within 1 pixel radius from
-	//				a iso line) blend the color linearly with the color of the
-	//				iso line (black). Draw all iso lines with a multiple of 14
-	//				pixels distance.
-
   vec2 ap = vec2(gl_FragCoord.x - pointA.x, gl_FragCoord.y - pointA.y);
   vec2 bp = vec2(gl_FragCoord.x - pointB.x, gl_FragCoord.y - pointB.y);
 
@@ -69,9 +59,12 @@ void main(void)
       float d_bc = point_to_edge_distance(point, pointB, pointC);
       float min_d = min(d_ab, min(d_ac, d_bc));
       float next_isoline = floor(min_d / 14.0) * 14.0;
-      
-      if(abs(min_d - next_isoline) < 1.0) {
-        gl_FragColor = mix(vec4(color, 1), vec4(0, 0, 0, 1), 0.5);
+      float dis_isoline = abs(min_d - next_isoline);
+
+      if(dis_isoline <= 1.0) {
+        gl_FragColor = mix(vec4(color, 1), vec4(0, 0, 0, 1), 1.0 - dis_isoline);
+      } else if(dis_isoline >= 13.0) {
+        gl_FragColor = mix(vec4(color, 1), vec4(0, 0, 0, 1), 1.0 - (14.0 - dis_isoline));
       } else {
         gl_FragColor = vec4(color, 1);
       }
