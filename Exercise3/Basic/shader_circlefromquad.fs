@@ -12,7 +12,7 @@ void main(void)
 	 float r = 0.8;
 
 	 vec2 x = canvasSize;
-	 // 3.3)	Map the fragment's coordinate (gl_FragCoord.xy) into
+	 // TODO 3.3)	Map the fragment's coordinate (gl_FragCoord.xy) into
 	 //				the range of [-1,1]. Discard all fragments outside the circle
 	 //				with the radius r. Smooth the circle's edge within
 	 //				[r-smoothMargin, r] by computing an appropriate alpha value.

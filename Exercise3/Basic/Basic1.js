@@ -5,7 +5,7 @@ function webGLStart(canvas) {
 
     gl.viewport(0, 0, canvas.width, canvas.height);
 
-    var c = [0.3, 0.2];
+    var c = [0.1, 0.2];
     var r = 0.7;
     var slices = 100;
 
@@ -13,23 +13,37 @@ function webGLStart(canvas) {
     var indices = [];
 
 
-    // TODO 3.1)	Replace the following code so that
+
+    // 3.1)	Replace the following code so that
     //              the vertices and indices to not describe
     //              a triangle but a circle around the center
-    //              c with radius r. Use triangles to describe 
+    //              c with radius r. Use triangles to describe
     //              the circle's geometry. The number of
     //              triangles is stored in the variable slices.
+    var increment =  2 * Math.PI / slices;
+    var angle = 0;
 
-    vertices.push(-.5);
-    vertices.push(-.5);
-    vertices.push(.5);
-    vertices.push(-.5);
-    vertices.push(0);
-    vertices.push(0.5);
+
+    //circle center
+    vertices.push(c[0]);
+    vertices.push(c[1]);
+
+    vertices.push(c[0] + r * Math.cos(angle));
+    vertices.push(c[1] + r * Math.sin(angle));
+    angle += increment;
+
+    for(var i = 1; i < slices; ++i){
+        vertices.push(c[0] + r * Math.cos(angle));
+        vertices.push(c[1] + r * Math.sin(angle));
+        angle += increment;
+        indices.push(0);
+        indices.push(i);
+        indices.push(i+1);
+    }
 
     indices.push(0);
+    indices.push(i);
     indices.push(1);
-    indices.push(2);
 
 
 
