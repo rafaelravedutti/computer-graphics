@@ -32,11 +32,11 @@ void main(void)
 
 	 float alpha = 1.0;
 
-	 float innerCircle = (r - smoothMargin) * (r - smoothMargin);
+	 float innerCircleDistance = (r - smoothMargin) * (r - smoothMargin);
 
 
-	 if(distance >= innerCircle &&  distance <= r){
-	 	alpha = 1.0 - clamp(distance, innerCircle, r*r);
+	 if(distance >= innerCircleDistance &&  distance <= r*r){
+	 		alpha = clamp(distance, distance - innerCircleDistance, 1.0);
 	 }
 
 		gl_FragColor = vec4(1.0, 85.0 / 255.0, 0.0, alpha);
