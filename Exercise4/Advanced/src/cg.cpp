@@ -86,20 +86,23 @@ void CG::update(float dt)
     //				mat4 glm::scale(vec3 v);
     //				mat4 glm::rotate(float angle, vec3 axis);
 
+    float earth_tx = earthOrbitRadius * cos(time * (360.0 / earthRevolutionTime));
+    float earth_ty = earthOrbitRadius * sin(time * (360.0 / earthRevolutionTime));
+
     // a) Sun
     sun = glm::scale(vec3(sunRadius));
 
     // b) Earth
-    earth = glm::translate(vec3(earthOrbitRadius, 0, 0));
+    earth = glm::translate(vec3(earth_tx, earth_ty, 0));
     earth = glm::scale(earth, vec3(earthRadius));
 
     // c) Moon
-    moon = glm::translate(vec3(earthOrbitRadius + moonOrbitRadius, 0, 0));
+    moon = glm::translate(vec3(earth_tx + moonOrbitRadius, earth_ty, 0));
     moon = glm::scale(moon, vec3(moonRadius));
 
     // d) Orbit Rings
     earthOrbit = glm::scale(vec3(earthOrbitRadius));
-    moonOrbit = glm::translate(vec3(earthOrbitRadius, 0, 0)); // <- Change this line
+    moonOrbit = glm::translate(vec3(earth_tx, earth_ty, 0)); // <- Change this line
 
 }
 
