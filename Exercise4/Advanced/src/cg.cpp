@@ -86,8 +86,8 @@ void CG::update(float dt)
     //				mat4 glm::scale(vec3 v);
     //				mat4 glm::rotate(float angle, vec3 axis);
 
-    float earth_tx = earthOrbitRadius * cos(time * (360.0 / earthRevolutionTime));
-    float earth_ty = earthOrbitRadius * sin(time * (360.0 / earthRevolutionTime));
+    float earth_tx = earthOrbitRadius * cos(time * glm::radians(360.0 / earthRevolutionTime));
+    float earth_ty = earthOrbitRadius * sin(time * glm::radians(360.0 / earthRevolutionTime));
 
     // a) Sun
     sun = glm::scale(vec3(sunRadius));
