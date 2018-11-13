@@ -80,12 +80,6 @@ void CG::update(float dt)
     if(!ImGui::GetIO().WantCaptureMouse)
         camera.update(dt);
 
-
-    // TODO 4.4		Use the following methods to create 4x4 transformation matrices:
-    //				mat4 glm::translate(vec3 v);
-    //				mat4 glm::scale(vec3 v);
-    //				mat4 glm::rotate(float angle, vec3 axis);
-
     float earth_tx = \
       earthOrbitRadius * cos(time * glm::radians(360.0 / earthRevolutionTime));
     float earth_ty = \
