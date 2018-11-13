@@ -62,7 +62,7 @@ var Basic1_1 = function () {
 
     function Rotation(alpha) {
 
-        // TODO 4.1a)	Implement a linear transformation
+        // 4.1a)	Implement a linear transformation
         //			    performing a rotation by the angle
         //			    alpha and replace the following line
         //			    by the appropriate code.
@@ -78,7 +78,7 @@ var Basic1_1 = function () {
 
     function Scaling(scale) {
 
-        // TODO 4.1a)	Implement a linear transformation
+        // 4.1a)	Implement a linear transformation
         //			    performing an isotropic scaling by
         //			    the scaling factor scale and replace
         //			    the following line by the appropriate
@@ -95,7 +95,7 @@ var Basic1_1 = function () {
 
     function ShearingX(shearX) {
 
-        // TODO 4.1a)	Implement a linear transformation
+        // 4.1a)	Implement a linear transformation
         //			    performing a shear along the x axis.
         //			    Replace the following line by the
         //			    appropriate code.
@@ -148,7 +148,7 @@ var Basic1_2 = function () {
 
     function ShearingX(shearX) {
 
-        // TODO 4.1b)	Implement a linear transformation
+        // 4.1b)	Implement a linear transformation
         //			    performing a shear along the x axis.
         //              Replace the following code.
         //  [1   shearX]
@@ -163,7 +163,7 @@ var Basic1_2 = function () {
 
     function ShearingY(shearY) {
 
-        // TODO 4.1b)	Implement a linear transformation
+        // 4.1b)	Implement a linear transformation
         //			    performing a shear along the y axis.
         //              Replace the following code.
         //  [1       0]
@@ -191,7 +191,7 @@ var Basic1_2 = function () {
 
             context.fillText("1. shearing", 225, 140);
 
-            // TODO 4.1b)	Instead of just copying the corner points
+            // 4.1b)	Instead of just copying the corner points
             //			    of triangle, call shearingX with the
             //			    corresponding parameters!
             //              Use ApplyLinearTransformation() to transform the corner points.
@@ -204,7 +204,7 @@ var Basic1_2 = function () {
 
             context.fillText("2. shearing", 375, 140);
 
-            // TODO 4.1b)	Instead of just copying the corner points
+            // 4.1b)	Instead of just copying the corner points
             //			    of triangle1, call shearingY with the
             //			    corresponding parameters!
             //              Use ApplyLinearTransformation() to transform the corner points.
@@ -217,7 +217,7 @@ var Basic1_2 = function () {
 
             context.fillText("3. shearing", 525, 140);
 
-            // TODO 4.1b)	Instead of just copying the corner points
+            // 4.1b)	Instead of just copying the corner points
             //			    of triangle2, call shearingX with the
             //			    corresponding parameters!
             //              Use ApplyLinearTransformation() to transform the corner points.
@@ -253,11 +253,11 @@ var Basic1_3 = function () {
   }
 
 
-  // Not working correctly!!!
+
 
     function CompositeAffineTransformations(affineTransf2, affineTransf1) {
 
-        // TODO 4.1c)	Replace the following line by creation
+        // 4.1c)	Replace the following line by creation
         //			    of the affine transformation equivalent
         //			    to the composition of affineTransf1 and
         //			    affineTransf2.
@@ -304,10 +304,11 @@ var Basic1_4 = function () {
 
         // Note: The original triangle has the fixed vertices (0, 0), (1, 0) and (0, 1).
 
-        // TODO 4.1d) 	Compute the affine transformation that
+        // 4.1d) 	Compute the affine transformation that
         //			    transforms the triangle to the target
         //			    triangle triangleTarget!
-        return new AffineTransformation([1.0, 0.0, 0.0, 1.0], [0.0, 0.0]);
+        let a = triangleTarget.a, b = triangleTarget.b, c = triangleTarget.c;
+        return new AffineTransformation([b.x - a.x, c.x - a.x, b.y - a.y, c.y - a.y], [a.x, a.y]);
 
     }
 
