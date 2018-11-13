@@ -87,17 +87,19 @@ void CG::update(float dt)
     //				mat4 glm::rotate(float angle, vec3 axis);
 
     // a) Sun
-    sun = mat4(1); // <- Change this line
+    sun = glm::scale(vec3(sunRadius));
 
     // b) Earth
-    earth = glm::translate(vec3(earthOrbitRadius,0,0)); // <- Change this line
+    earth = glm::translate(vec3(earthOrbitRadius, 0, 0));
+    earth = glm::scale(earth, vec3(earthRadius));
 
     // c) Moon
-    moon =  glm::translate(vec3(earthOrbitRadius + moonOrbitRadius,0,0)); // <- Change this line
+    moon = glm::translate(vec3(earthOrbitRadius + moonOrbitRadius, 0, 0));
+    moon = glm::scale(moon, vec3(moonRadius));
 
     // d) Orbit Rings
     earthOrbit = glm::scale(vec3(earthOrbitRadius));
-    moonOrbit = glm::translate(vec3(earthOrbitRadius + moonOrbitRadius,0,0)); // <- Change this line
+    moonOrbit = glm::translate(vec3(earthOrbitRadius, 0, 0)); // <- Change this line
 
 }
 
