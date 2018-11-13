@@ -106,10 +106,18 @@ void CG::update(float dt)
     // b) Earth
     earth = glm::translate(vec3(earth_tx, earth_ty, 0));
     earth = glm::scale(earth, vec3(earthRadius));
+    earth = glm::rotate(earth, earthObliquity, vec3(1, 0, 0));
+    earth = glm::rotate(
+      earth, (float)(time * glm::radians(360.0 / earthRotationTime)), vec3(0, 0, 1)
+    );
 
     // c) Moon
     moon = glm::translate(vec3(earth_tx + moon_tx, earth_ty + moon_ty, 0));
     moon = glm::scale(moon, vec3(moonRadius));
+    moon = glm::rotate(moon, moonObliquity, vec3(1, 0, 0));
+    moon = glm::rotate(
+      moon, (float)(time * glm::radians(360.0 / moonRotationTime)), vec3(0, 0, 1)
+    );
 
     // d) Orbit Rings
     earthOrbit = glm::scale(vec3(earthOrbitRadius));
