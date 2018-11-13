@@ -122,6 +122,7 @@ void CG::update(float dt)
     // d) Orbit Rings
     earthOrbit = glm::scale(vec3(earthOrbitRadius));
     moonOrbit = glm::translate(vec3(earth_tx, earth_ty, 0));
+    moonOrbit = glm::rotate(moonOrbit, moonOrbitalInclination, vec3(1, 0, 0));
 
 }
 
