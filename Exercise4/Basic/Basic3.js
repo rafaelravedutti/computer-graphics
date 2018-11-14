@@ -174,14 +174,19 @@ var Basic3 = function () {
 
 
         // TODO 4.3 	Setup affine transformations for the luminary movement:
-        //       	    First compute the rotation of the luminary around its 
+        //       	    First compute the rotation of the luminary around its
         //       	    parent object (The angle is computed by time*luminary.speed.).
-        //       	    Finally you have to compose the model matrix considering 
+        //       	    Finally you have to compose the model matrix considering
         //			    the model matrix of the parent object (modelMatrixParent).
         //			    You can use functions mat3.create(), mat.fromRotation and mat3.mul() defined
         //			    in gl-matrix.js. Replace the following dummy line.
-        var modelMatrix = modelMatrixParent;
-
+        let alpha = time * luminary.speed;
+        let rotationMat = mat3.create();
+        mat3.fromRotation(rotationMat, alpha);
+        let out = mat3.create();
+        var modelMatrix = mat3.multiply(out, rotationMat, modelMatrixParent);
+        // var modelMatrix = [mat3.multiply(out, rotationMat, modelMatrixParent), luminary.modelMatrix, modelMatrixParent];
+        // console.log(luminary.modelMatrix);
 
         // draw orbit
         drawCircle(gl, time, luminary.orbitShaderProgram, luminary.orbitRadius, luminary.color, modelMatrixParent);
@@ -192,8 +197,12 @@ var Basic3 = function () {
 
         // TODO 4.3 	Draw children by calling drawLuminary()
         //       	    recursively for every child.
+        if(luminary.children.length == 0)
+          return;
 
-
+        // console.log(modelMatrixParent);
+        for(let i = 0; i < luminary.children.length; ++i)
+          drawLuminary(gl, time, luminary.children[i], modelMatrix);
 
     }
 
