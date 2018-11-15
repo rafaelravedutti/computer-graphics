@@ -181,12 +181,12 @@ var Basic3 = function () {
         //			    You can use functions mat3.create(), mat.fromRotation and mat3.mul() defined
         //			    in gl-matrix.js. Replace the following dummy line.
         let alpha = time * luminary.speed;
-        let rotationMat = mat3.create();
-        mat3.fromRotation(rotationMat, alpha);
-        let out = mat3.create();
-        var modelMatrix = mat3.multiply(out, rotationMat, modelMatrixParent);
-        // var modelMatrix = [mat3.multiply(out, rotationMat, modelMatrixParent), luminary.modelMatrix, modelMatrixParent];
-        // console.log(luminary.modelMatrix);
+        let rotationMatrix = mat3.create();
+        let modelMatrix = mat3.create();
+
+        mat3.fromRotation(rotationMatrix, alpha);
+        mat3.multiply(modelMatrix, rotationMatrix, luminary.modelMatrix);
+        //mat3.multiply(modelMatrix, modelMatrix, modelMatrixParent);
 
         // draw orbit
         drawCircle(gl, time, luminary.orbitShaderProgram, luminary.orbitRadius, luminary.color, modelMatrixParent);
@@ -194,16 +194,9 @@ var Basic3 = function () {
         // draw luminary
         drawCircle(gl, time, luminary.luminaryShaderProgram, luminary.radius, luminary.color, modelMatrix);
 
-
-        // TODO 4.3 	Draw children by calling drawLuminary()
-        //       	    recursively for every child.
-        if(luminary.children.length == 0)
-          return;
-
-        // console.log(modelMatrixParent);
-        for(let i = 0; i < luminary.children.length; ++i)
+        for(let i = 0; i < luminary.children.length; ++i) {
           drawLuminary(gl, time, luminary.children[i], modelMatrix);
-
+        }
     }
 
     function drawCircle(gl, time, shaderProgram, radius, color, modelMatrix) {
