@@ -172,21 +172,13 @@ var Basic3 = function () {
             mat3.identity(modelMatrixParent);
         }
 
-
-        // TODO 4.3 	Setup affine transformations for the luminary movement:
-        //       	    First compute the rotation of the luminary around its
-        //       	    parent object (The angle is computed by time*luminary.speed.).
-        //       	    Finally you have to compose the model matrix considering
-        //			    the model matrix of the parent object (modelMatrixParent).
-        //			    You can use functions mat3.create(), mat.fromRotation and mat3.mul() defined
-        //			    in gl-matrix.js. Replace the following dummy line.
         let alpha = time * luminary.speed;
         let rotationMatrix = mat3.create();
         let modelMatrix = mat3.create();
 
         mat3.fromRotation(rotationMatrix, alpha);
         mat3.multiply(modelMatrix, rotationMatrix, luminary.modelMatrix);
-        //mat3.multiply(modelMatrix, modelMatrix, modelMatrixParent);
+        mat3.multiply(modelMatrix, modelMatrixParent, modelMatrix);
 
         // draw orbit
         drawCircle(gl, time, luminary.orbitShaderProgram, luminary.orbitRadius, luminary.color, modelMatrixParent);
