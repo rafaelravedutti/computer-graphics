@@ -90,35 +90,15 @@ function ApplyLinearTransformation(linearTransf, point) {
 
 var Basic2 = function () {
 
-  function multiplyMatrix(out, a, b) {
-	    let a0 = a[0], a1 = a[1], a2 = a[2], a3 = a[3],
-	        b0 = b[0], b1 = b[1], b2 = b[2], b3 = b[3];
-	    out[0] = a0 * b0 + a1 * b2;
-	    out[1] = a0 * b1 + a1 * b3;
-	    out[2] = a2 * b0 + a3 * b2;
-	    out[3] = a2 * b1 + a3 * b3;
-      console.log(out);
-	    return out;
-	}
-
     function BuildNormalTransformation(linearTransf) {
+        let inverseDet = 1.0 / (linearTransf.A[0] * linearTransf.A[3] - linearTransf.A[1] * linearTransf.A[2]);
 
-        // TODO 4.2     Build up the normal transformation corresponding
-        //              to the linear transformation stored in linearTransf.
-        //              Replace the following dummy line.
-        // console.log(linearTransf);
-        let a = linearTransf.A[0], b = linearTransf.A[1], c = linearTransf.A[2], d = linearTransf.A[3];
-        let inverseDeterminant = 1.0/(a*d - b*c);
-        // let proof_matrix = [d*inverseDeterminant, -b*inverseDeterminant, -c*inverseDeterminant, a*inverseDeterminant];
-        // let out = [4];
-        // multiplyMatrix(out, linearTransf.A, proof_matrix);
-        // console.log(proof_matrix);
-        // console.log(out);
-        linearTransf.A[0] = d*inverseDeterminant;
-        linearTransf.A[1] = -c*inverseDeterminant;
-        linearTransf.A[2] = -b*inverseDeterminant;
-        linearTransf.A[3] =  a*inverseDeterminant;
-        return linearTransf;
+        return new LinearTransformation([
+          linearTransf.A[3] * inverseDet,
+          -linearTransf.A[2] * inverseDet,
+          -linearTransf.A[1] * inverseDet,
+          linearTransf.A[0] * inverseDet
+        ]);
     }
 
     function ShearingX(shearX) {
