@@ -191,7 +191,7 @@ void CG::renderParticles()
 		// The upper left 3x3 part of a matrix can be obtained by mat3(matrix),
 		// a 3x3 matrix can be transformed to a 4x4 one by mat4(matrix).
 
-        mat4 particleTransformation =  glm::translate(p.position); // <- Change this line
+        mat4 particleTransformation = glm::rotate((float) glm::radians(90.0), vec3(1, 0, 0)) * mat4(glm::inverse(mat3(camera.getViewMatrix()))) * glm::translate(p.position); // <- Change this line
 
 
         glUniformMatrix4fv(1, 1, GL_FALSE, &particleTransformation[0][0]);
