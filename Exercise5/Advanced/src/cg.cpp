@@ -121,6 +121,17 @@ void CG::update(float dt)
 		// float glm::linearRand(float min, float max);
 		// vec3 glm::linearRand(vec3 min, vec3 max);
 
+        p.position = p.position + p.velocity * p.timeOffset;
+
+        if(p.lifeTime < 0.0) {
+            p.position = particleStart;
+            p.lifeTime = glm::linearRand(5.0, 10.0);
+            p.timeOffset = glm::linearRand(0.0, 1.5);
+            p.velocity = (
+                  planeNormal +
+                  glm::linearRand(vec3(0.0, 0.0, 0.0), vec3(0.7, 0.7, 0.7))
+                ) * glm::linearRand(0.0, 0.1);
+        }
     }
 }
 
@@ -179,7 +190,8 @@ void CG::renderParticles()
 	// Use glBlendFunc.
 	// Don't forget enabling and disabling blending via glEnable() and glDisable().
 
-
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for(Particle& p : particles)
     {
@@ -192,9 +204,9 @@ void CG::renderParticles()
 		// a 3x3 matrix can be transformed to a 4x4 one by mat4(matrix).
 
         mat4 particleTransformation =
+          glm::translate(p.position) *
           mat4(glm::inverse(mat3(camera.getViewMatrix()))) *
-          glm::rotate((float) glm::radians(90.0), vec3(1, 0, 0)) *
-          glm::translate(p.position);
+          glm::rotate((float) glm::radians(90.0), vec3(1, 0, 0));
 
 
         glUniformMatrix4fv(1, 1, GL_FALSE, &particleTransformation[0][0]);
@@ -202,6 +214,8 @@ void CG::renderParticles()
         glUniform1fv(4,1,&timeTmp);
         planeMesh.render();
     }
+
+    glDisable(GL_BLEND);
 
 }
 
