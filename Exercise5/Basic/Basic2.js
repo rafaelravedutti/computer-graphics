@@ -1,4 +1,4 @@
-var enableInteraction = false;
+var enableInteraction = true;
 
 mat4.perspective = function (out, fovy, near, far) {
 
@@ -116,12 +116,12 @@ Camera3D.prototype.update = function () {
 
     // this.cameraMatrix = ?
 
-    this.cameraMatrix = [
+    this.cameraMatrix = mat4.fromValues(
       this.u[0], this.u[1], this.u[2], -vec3.dot(this.u, eye_vec),
       this.v[0], this.v[1], this.v[2], -vec3.dot(this.v, eye_vec),
       this.w[0], this.w[1], this.w[2], -vec3.dot(this.w, eye_vec),
       0, 0, 0, 1
-    ];
+    );
 
     // use mat4.perspective to set up the projection matrix
     mat4.perspective(this.projectionMatrix, this.fovy, this.near, this.far);
