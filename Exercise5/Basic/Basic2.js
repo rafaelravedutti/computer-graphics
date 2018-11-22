@@ -10,10 +10,26 @@ mat4.perspective = function (out, fovy, near, far) {
     // out[1] = ?
     // ...
 
+    var aspect = 1.0;
+    var lr = aspect * near * Math.tan(fovy / 2);
+    var tb = near * Math.tan(fovy / 2);
 
-
-
-
+    out[0] = (2 * near) / (lr * 2);
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+    out[4] = 0;
+    out[5] = (2 * near) / (tb * 2);
+    out[6] = 0;
+    out[7] = 0;
+    out[8] = 0;
+    out[9] = 0;
+    out[10] = -(far + near) / (far - near);
+    out[11] = -(2 * far * near) / (far - near);
+    out[12] = 0;
+    out[13] = 0;
+    out[14] = -1;
+    out[15] = 0;
 };
 
 function Camera3D() {
@@ -86,12 +102,39 @@ Camera3D.prototype.update = function () {
     // this.u = ?
     // this.v = ? 
 
+    this.w = -this.lookAtPoint / (
+      this.lookAtPoint[0] * this.lookAtPoint[0] +
+      this.lookAtPoint[1] * this.lookAtPoint[1] +
+      this.lookAtPoint[2] * this.lookAtPoint[2]
+    );
 
+    var txw = [
+      this.upVector[1] * this.w[2] - this.upVector[2] * this.w[1],
+      this.upVector[2] * this.w[0] - this.upVector[0] * this.w[2],
+      this.upVector[0] * this.w[1] - this.upVector[1] * this.w[0]
+    ];
 
+    this.u = txw / (txw[0] * txw[0] + txw[1] * txw[1] + txw[2] * txw[2]);
+
+    this.v = [
+      this.w[1] * this.u[2] - this.w[2] * this.u[1],
+      this.w[2] * this.u[0] - this.w[0] * this.u[2],
+      this.w[0] * this.u[1] - this.w[1] * this.u[0]
+    ];
+
+    var mrte = [
+      -(this.u[0] * this.eye[0] + this.u[1] * this.eye[1] + this.u[2] * this.eye[2]),
+      -(this.v[0] * this.eye[0] + this.v[1] * this.eye[1] + this.v[2] * this.eye[2]),
+      -(this.w[0] * this.eye[0] + this.w[1] * this.eye[1] + this.w[2] * this.eye[2])
+    ];
 
     // this.cameraMatrix = ?
-
-
+    this.cameraMatrix = [
+      this.u[0], this.u[1], this.u[2], mrte[0],
+      this.v[0], this.v[1], this.v[2], mrte[1],
+      this.w[0], this.w[1], this.w[2], mrte[2],
+      0, 0, 0, 1
+    ];
 
 
     // use mat4.perspective to set up the projection matrix
