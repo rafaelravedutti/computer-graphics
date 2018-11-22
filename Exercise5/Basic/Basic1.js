@@ -15,13 +15,13 @@ var Basic1_1 = function () {
 
     function OrthogonalProjection2D(point2D) {
         // TODO 5.1a)   Implement the orthogonal projection.
-        //              The camera orientation is aligned with 
-        //              the global coordinate system, the view 
-        //              direction is the z axis. Note that point2D[0] 
-        //              is the x component and point2D[1] is the z 
-        //              component (Hint: have a look at the bottom left 
+        //              The camera orientation is aligned with
+        //              the global coordinate system, the view
+        //              direction is the z axis. Note that point2D[0]
+        //              is the x component and point2D[1] is the z
+        //              component (Hint: have a look at the bottom left
         //              of the output image, there you will see the x-z axis).
-        return 0.0;
+        return point2D[0];
 
     }
 
@@ -90,15 +90,28 @@ var Basic1_1 = function () {
 var Basic1_2 = function () {
 
     function PerspectiveProjection2D(eye, imagePlane, point2D) {
-        // TODO 5.1b)   Implement the perspective projection assuming 
+        // TODO 5.1b)   Implement the perspective projection assuming
         //              the center of the camera lies in (eye[0], eye[1]).
-        //              The camera orientation is aligned with the global 
-        //              coordinate system. Note that eye, point2D, imagePlane 
-        //              are all in world space. You first have to transform 
+        //              The camera orientation is aligned with the global
+        //              coordinate system. Note that eye, point2D, imagePlane
+        //              are all in world space. You first have to transform
         //              everything to camera space. The variable 'imagePlane'
-        //              gives you the z value of the image plane (You also have 
+        //              gives you the z value of the image plane (You also have
         //              to transform it to camera space coordinates.).
-        return 0.0;
+        //center of the camera lies in (eye[0], eye[1])
+        //imagePlane = z distance value
+
+        //  Transforming to camera space: new point = Rotation*(point - camera)
+        // as the orientation is the same, no rotation!
+        let new_pointX = point2D[0] - eye[0];
+        let new_pointZ = point2D[1] - eye[1];
+
+        //To calculate the projection(for 3D->2D): (X,Y,Z) -> (x,y) in plane Z, distance f
+        // (x, y) = (f*(x/z), f*(y/z))
+        // Then for 2D -> 1D: (x,z) -> (x) plane Z, distance imagePlane
+        // (x) = imagePlane * (x/z)
+
+        return imagePlane*new_pointX/new_pointZ;
 
     }
 
@@ -171,10 +184,10 @@ var Basic1_2 = function () {
 // compute a perspective transformation
 // that perspectively maps the 2D space onto a 1D line
 mat3.perspective = function (out, fovy, near, far) {
-    // TODO 5.1c)   Set up the projection matrix, parameterized 
+    // TODO 5.1c)   Set up the projection matrix, parameterized
     //              with the variables fovy, near and far.
-    //              Use the OpenGL style to set up the matrix 
-    //              (as in the lecture), i.e. the camera looks 
+    //              Use the OpenGL style to set up the matrix
+    //              (as in the lecture), i.e. the camera looks
     //              into the negative view direction.
 
     out[0] = 0;
@@ -237,7 +250,7 @@ Camera.prototype.update = function () {
     //              You can use gl-matrix.js where necessary.
 
 
-    // TODO 5.1c)   Set up the projection matrix using mat3.perspective(...), 
+    // TODO 5.1c)   Set up the projection matrix using mat3.perspective(...),
     //              which has to be implemented!
 
 
@@ -247,10 +260,10 @@ Camera.prototype.projectPoint = function (point2D) {
     // this function projects a point form world space coordinates to the canonical viewing volume
 
 
-    // TODO 5.1c)   Use this.cameraMatrix to transform the point to 
+    // TODO 5.1c)   Use this.cameraMatrix to transform the point to
     //              camera space (Use homogeneous coordinates!). Then,
     //              use this.projectionMatrix to apply the projection.
-    //              Don't forget to dehomogenize the projected point 
+    //              Don't forget to dehomogenize the projected point
     //              before returning it! You can use gl-matrix.js where
     //              necessary.
     return [0.0, 0.0];
