@@ -112,15 +112,6 @@ void CG::update(float dt)
     {
         p.lifeTime -= dt;
 
-		// TODO: 5.3 d)
-		// Update Particles:
-		// - integrate position
-		// - reset if lifetime < 0
-		//
-		// Use the following methods to get random values:
-		// float glm::linearRand(float min, float max);
-		// vec3 glm::linearRand(vec3 min, vec3 max);
-
         p.position = p.position + p.velocity * p.timeOffset;
 
         if(p.lifeTime < 0.0) {
@@ -183,26 +174,11 @@ void CG::renderParticles()
     glUniform3fv(3,1,&lightDir[0]);
     glUniform4fv(2,1,&vec4(1,1,1,1)[0]);
 
-
-
-	// TODO: 5.3 e)
-	// Render particles with alpha blending.
-	// Use glBlendFunc.
-	// Don't forget enabling and disabling blending via glEnable() and glDisable().
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for(Particle& p : particles)
     {
-
-		// TODO: 5.3 c)
-		// Compute the correct transformation matrix for each particle.
-		// The particle must be oriented towards the current camera.
-		// Use "camera.getViewMatrix()"!
-		// The upper left 3x3 part of a matrix can be obtained by mat3(matrix),
-		// a 3x3 matrix can be transformed to a 4x4 one by mat4(matrix).
-
         mat4 particleTransformation =
           glm::translate(p.position) *
           mat4(glm::inverse(mat3(camera.getViewMatrix()))) *
@@ -224,11 +200,11 @@ static mat3 orthonormalBasis(vec3 dir)
 {
     mat3 v = mat3();
 
-	// TODO: 5.3 f)
-	// Create an orthonormal basis from the unit vector "dir" and store it in "v".
-	// The last column (v[2]) should be the negative "dir".
-	// Use cross products to obtain the other two vectors.
-
+    v[0] = vec3(0, -dir.z, dir.y);
+    v[0] /= length(v[0]);
+    v[1] = cross(dir, v[0]);
+    v[1] /= length(v[1]);
+    v[2] = -dir;
     return v;
 }
 
@@ -242,11 +218,11 @@ void CG::renderParticleShadows()
     glUniform3fv(4,1,&pointOnPlane[0]);
     glUniform3fv(5,1,&planeNormal[0]);
 
+    glEnable(GL_BLEND);
+    glEnable(GL_POLYGON_OFFSET_FILL);
 
-	// TODO: 5.3 g)
-	// Render particles with alpha blending.
-	// Remove Z-figthing with glPolygonOffset.
-	// Don't forget enabling and disabling everything.
+    glPolygonOffset(-1, -1);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for(Particle& p : particles)
     {
@@ -258,6 +234,8 @@ void CG::renderParticleShadows()
         planeMesh.render();
     }
 
+    glDisable(GL_BLEND);
+    glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void CG::render()
