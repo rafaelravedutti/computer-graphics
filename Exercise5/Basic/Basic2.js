@@ -102,12 +102,13 @@ Camera3D.prototype.update = function () {
     // this.u = ?
     // this.v = ? 
 
-    this.w = -vec3.fromValues(this.lookAtPoint[0], this.lookAtPoint[1], this.lookAtPoint[2]);
-    this.w /= vec3.length(this.w);
+    this.w = vec3.fromValues(this.lookAtPoint[0], this.lookAtPoint[1], this.lookAtPoint[2]);
+    vec3.negate(this.w, this.w);
+    vec3.scale(this.w, this.w, 1.0 / vec3.length(this.w));
 
     this.u = vec3.fromValues(0, 0, 0);
     vec3.cross(this.u, vec3.fromValues(this.upVector[0], this.upVector[1], this.upVector[2]), this.w);
-    this.u /= vec3.length(this.u);
+    vec3.scale(this.u, this.u, 1.0 / vec3.length(this.u));
 
     this.v = vec3.fromValues(0, 0, 0);
     vec3.cross(this.v, this.w, this.u);
