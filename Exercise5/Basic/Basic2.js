@@ -102,40 +102,26 @@ Camera3D.prototype.update = function () {
     // this.u = ?
     // this.v = ? 
 
-    this.w = -this.lookAtPoint / (
-      this.lookAtPoint[0] * this.lookAtPoint[0] +
-      this.lookAtPoint[1] * this.lookAtPoint[1] +
-      this.lookAtPoint[2] * this.lookAtPoint[2]
-    );
+    this.w = -vec3.fromValues(this.lookAtPoint[0], this.lookAtPoint[1], this.lookAtPoint[2]);
+    this.w /= vec3.length(this.w);
 
-    var txw = [
-      this.upVector[1] * this.w[2] - this.upVector[2] * this.w[1],
-      this.upVector[2] * this.w[0] - this.upVector[0] * this.w[2],
-      this.upVector[0] * this.w[1] - this.upVector[1] * this.w[0]
-    ];
+    this.u = vec3.fromValues(0, 0, 0);
+    vec3.cross(this.u, vec3.fromValues(this.upVector[0], this.upVector[1], this.upVector[2]), this.w);
+    this.u /= vec3.length(this.u);
 
-    this.u = txw / (txw[0] * txw[0] + txw[1] * txw[1] + txw[2] * txw[2]);
+    this.v = vec3.fromValues(0, 0, 0);
+    vec3.cross(this.v, this.w, this.u);
 
-    this.v = [
-      this.w[1] * this.u[2] - this.w[2] * this.u[1],
-      this.w[2] * this.u[0] - this.w[0] * this.u[2],
-      this.w[0] * this.u[1] - this.w[1] * this.u[0]
-    ];
-
-    var mrte = [
-      -(this.u[0] * this.eye[0] + this.u[1] * this.eye[1] + this.u[2] * this.eye[2]),
-      -(this.v[0] * this.eye[0] + this.v[1] * this.eye[1] + this.v[2] * this.eye[2]),
-      -(this.w[0] * this.eye[0] + this.w[1] * this.eye[1] + this.w[2] * this.eye[2])
-    ];
+    var eye_vec = vec3.fromValues(this.eye[0], this.eye[1], this.eye[2]);
 
     // this.cameraMatrix = ?
+
     this.cameraMatrix = [
-      this.u[0], this.u[1], this.u[2], mrte[0],
-      this.v[0], this.v[1], this.v[2], mrte[1],
-      this.w[0], this.w[1], this.w[2], mrte[2],
+      this.u[0], this.u[1], this.u[2], -vec3.dot(this.u, eye_vec),
+      this.v[0], this.v[1], this.v[2], -vec3.dot(this.v, eye_vec),
+      this.w[0], this.w[1], this.w[2], -vec3.dot(this.w, eye_vec),
       0, 0, 0, 1
     ];
-
 
     // use mat4.perspective to set up the projection matrix
     mat4.perspective(this.projectionMatrix, this.fovy, this.near, this.far);
