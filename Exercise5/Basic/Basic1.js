@@ -14,7 +14,7 @@ function arrow(context, fromx, fromy, tox, toy) {
 var Basic1_1 = function () {
 
     function OrthogonalProjection2D(point2D) {
-        // TODO 5.1a)   Implement the orthogonal projection.
+        // 5.1a)   Implement the orthogonal projection.
         //              The camera orientation is aligned with
         //              the global coordinate system, the view
         //              direction is the z axis. Note that point2D[0]
@@ -90,7 +90,7 @@ var Basic1_1 = function () {
 var Basic1_2 = function () {
 
     function PerspectiveProjection2D(eye, imagePlane, point2D) {
-        // TODO 5.1b)   Implement the perspective projection assuming
+        // 5.1b)   Implement the perspective projection assuming
         //              the center of the camera lies in (eye[0], eye[1]).
         //              The camera orientation is aligned with the global
         //              coordinate system. Note that eye, point2D, imagePlane
@@ -184,22 +184,22 @@ var Basic1_2 = function () {
 // compute a perspective transformation
 // that perspectively maps the 2D space onto a 1D line
 mat3.perspective = function (out, fovy, near, far) {
-    // TODO 5.1c)   Set up the projection matrix, parameterized
+    // 5.1c)   Set up the projection matrix, parameterized
     //              with the variables fovy, near and far.
     //              Use the OpenGL style to set up the matrix
     //              (as in the lecture), i.e. the camera looks
     //              into the negative view direction.
 
-    out[0] = 0;
+    bt = near * Math.tan(fovy / 2);
+
+    out[0] = (2 * near) / (2 * bt);
     out[1] = 0;
     out[2] = 0;
-
     out[3] = 0;
-    out[4] = 0;
-    out[5] = 0;
-
+    out[4] = -(far + near) / (far - near);
+    out[5] = -(2 * far * near) / (far - near);
     out[6] = 0;
-    out[7] = 0;
+    out[7] = -1;
     out[8] = 0;
 
     return out;
@@ -244,29 +244,58 @@ Camera.prototype.update = function () {
     vec2.normalize(negViewDir, negViewDir);
 
 
-    // TODO 5.1c)   Set up the camera matrix and the inverse camera matrix.
+    // 5.1c)   Set up the camera matrix and the inverse camera matrix.
     //              The cameraMatrix transforms from world space to camera space.
     //              The cameraMatrixInverse transforms from camera space to world space.
     //              You can use gl-matrix.js where necessary.
+    this.cameraMatrix = mat3.fromValues(
+      -1, 0, this.eye[0],
+      0, -1, -this.eye[1],
+      0, 0, 1
+    );
+
+    this.cameraMatrixInverse = mat3.fromValues(
+      -1, 0, this.eye[0],
+      0, -1, this.eye[1],
+      this.eye[0], this.eye[1], 1
+    );
 
 
-    // TODO 5.1c)   Set up the projection matrix using mat3.perspective(...),
+    // 5.1c)   Set up the projection matrix using mat3.perspective(...),
     //              which has to be implemented!
-
+    this.projectionMatrix = mat3.perspective(this.projectionMatrix, this.fovy, this.near, this.far);
 
 };
+
+  function multiplyArrayMatrix(matrix, array, out){
+    out[0] = array[0] * matrix[0] + array[1]* matrix[1] + array[2] * matrix[2];
+    out[1] = array[0] * matrix[3] + array[1]* matrix[4] + array[2] * matrix[5];
+    out[2] = array[0] * matrix[6] + array[1]* matrix[7] + array[2] * matrix[8];
+    return out;
+  }
 
 Camera.prototype.projectPoint = function (point2D) {
     // this function projects a point form world space coordinates to the canonical viewing volume
 
 
-    // TODO 5.1c)   Use this.cameraMatrix to transform the point to
+    // 5.1c)   Use this.cameraMatrix to transform the point to
     //              camera space (Use homogeneous coordinates!). Then,
     //              use this.projectionMatrix to apply the projection.
     //              Don't forget to dehomogenize the projected point
     //              before returning it! You can use gl-matrix.js where
     //              necessary.
-    return [0.0, 0.0];
+
+    // point2D -> homogeneous coordinates
+    var newPoint = [point2D[0], point2D[1], 1];
+    // newPoint * cameraMatrix
+    var newPoint2 = new Array(3);
+    newPoint2 = multiplyArrayMatrix(this.cameraMatrix, newPoint, newPoint2);
+    // newPoint2 * projectionMatrix
+    newPoint = multiplyArrayMatrix(this.projectionMatrix, newPoint2, newPoint);
+
+    // dehomogenize new Point
+
+    return [newPoint[0]/newPoint[2], (newPoint[1]/newPoint[2])-1];
 
 }
 

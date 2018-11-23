@@ -2,13 +2,9 @@ var enableInteraction = true;
 
 mat4.perspective = function (out, fovy, near, far) {
 
-    // TODO 5.2     Implement the creation of the projection
+    //  5.2     Implement the creation of the projection
     //              matrix. Orientate yourselves by the 2D case
     //              implemented in Basic1.js.
-
-    // out[0] = ?
-    // out[1] = ?
-    // ...
 
     var aspect = 1.0;
     var lr = aspect * near * Math.tan(fovy / 2);
@@ -92,15 +88,15 @@ Camera3D.prototype.move = function (dir) {
 };
 
 Camera3D.prototype.update = function () {
-    // TODO 5.2     Implement the creation of the camera matrix
-    //              (this.cameraMatrix), also setting the three 
+    // 5.2     Implement the creation of the camera matrix
+    //              (this.cameraMatrix), also setting the three
     //              vectors this.u, this.v and this.w which form
-    //              the camera coordinate system. Use the  
+    //              the camera coordinate system. Use the
     //              notation from the lecture.
 
     // this.w = ?
     // this.u = ?
-    // this.v = ? 
+    // this.v = ?
 
     this.w = vec3.fromValues(this.lookAtPoint[0], this.lookAtPoint[1], this.lookAtPoint[2]);
     vec3.negate(this.w, this.w);
@@ -117,12 +113,12 @@ Camera3D.prototype.update = function () {
 
     // this.cameraMatrix = ?
 
-    this.cameraMatrix = mat4.fromValues(
-      this.u[0], this.u[1], this.u[2], -vec3.dot(this.u, eye_vec),
-      this.v[0], this.v[1], this.v[2], -vec3.dot(this.v, eye_vec),
-      this.w[0], this.w[1], this.w[2], -vec3.dot(this.w, eye_vec),
-      0, 0, 0, 1
-    );
+    // this.cameraMatrix = mat4.fromValues(
+    //   this.u[0], this.u[1], this.u[2], -vec3.dot(this.u, eye_vec),
+    //   this.v[0], this.v[1], this.v[2], -vec3.dot(this.v, eye_vec),
+    //   this.w[0], this.w[1], this.w[2], -vec3.dot(this.w, eye_vec),
+    //   0, 0, 0, 1
+    // );
 
     // use mat4.perspective to set up the projection matrix
     mat4.perspective(this.projectionMatrix, this.fovy, this.near, this.far);
