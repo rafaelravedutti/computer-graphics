@@ -190,7 +190,20 @@ void main()
     {
         //TODO 6.6 e) 
 		//Quantize the three components to implement cell shading.
-		out_color = colorDirectional + colorSpot + colorPoint; //<- change this line
+        vec3 quantized_color;
+        float brightness = 1.0;
+
+        quantized_color = rgb2hsv(colorDirectional + colorSpot + colorPoint);
+
+        if(quantized_color[2] < 0.33) {
+          brightness = 0.0;
+        } else if(quantized_color[2] < 0.66) {
+          brightness = 0.5;
+        }
+        
+        out_color = hsv2rgb(
+          vec3(quantized_color[0], quantized_color[1], brightness));
+        
     }else
     {
         out_color = colorDirectional + colorSpot + colorPoint;
