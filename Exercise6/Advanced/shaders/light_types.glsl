@@ -76,18 +76,6 @@ vec3 phong(
         vec3 surfaceColor,
         vec3 n, vec3 l, vec3 v)
 {
-
-
-    //TODO 6.6 a)
-    //Compute the diffuse, specular and ambient term of the phong lighting model.
-    //Use the following parameters of the light object:
-    //  light.color
-    //  light.diffuseIntensity
-    //  light.specularIntensity
-    //  light.shiny
-    //  light.ambientIntensity
-	//as well as the other function parameters.
-
     vec3 color_ambient;
     vec3 color_diffuse;
     vec3 color_specular;
@@ -142,16 +130,12 @@ void main()
 
     if(directionalLight.enable)
     {
-        // TODO 6.6 b)
-        // Use the uniforms "directionalLight" and "objectColor" to compute "colorDirectional". 
         colorDirectional = phong(
           directionalLight, objectColor, n, directionalLight.direction, v);
     }
 
     if(pointLight.enable)
     {
-        //TODO 6.6 c)
-        //Use the uniforms "pointLight" and "objectColor" to compute "colorPoint".
         vec3 xp = pointLight.position - positionWorldSpace;
         float r = length(xp);
 
@@ -164,8 +148,6 @@ void main()
 
     if(spotLight.enable)
     {
-        //TODO 6.6 d)
-        //Use the uniforms "spotLight" and "objectColor" to compute "colorSpot".
         vec3 xp = spotLight.position - positionWorldSpace;
         float r = length(xp);
         float a = acos(dot(
@@ -188,8 +170,6 @@ void main()
 
     if(cellShading)
     {
-        //TODO 6.6 e) 
-		//Quantize the three components to implement cell shading.
         vec3 quantized_color;
         float brightness = 1.0;
 
