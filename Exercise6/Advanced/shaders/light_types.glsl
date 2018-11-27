@@ -200,7 +200,7 @@ void main()
         } else if(quantized_color[2] < 0.66) {
           brightness = 0.5;
         }
-        
+ 
         out_color = hsv2rgb(
           vec3(quantized_color[0], quantized_color[1], brightness));
         
