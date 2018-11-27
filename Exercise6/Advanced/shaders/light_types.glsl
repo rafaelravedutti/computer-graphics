@@ -88,11 +88,19 @@ vec3 phong(
     //  light.ambientIntensity
 	//as well as the other function parameters.
 
-    vec3 color_ambient  = vec3(0);
-	vec3 color_diffuse  = vec3(0);
-    vec3 color_specular = vec3(0);
+    vec3 color_ambient;
+    vec3 color_diffuse = vec3(0);
+    vec3 color_specular;
+    vec3 r = 2 * dot(n, l) * n - l;
+
+    color_ambient = surfaceColor * light.ambientIntensity;
+    color_specular = light.color * light.specularIntensity * pow(dot(v, r), light.shiny);
+
+    if(dot(n, l) > 0 && dot(n, v) > 0) {
+      color_diffuse = surfaceColor * light.diffuseIntensity * dot(n, l);
+    }
+
     return color_ambient + color_diffuse + color_specular;
-	
 }
 
 
@@ -129,24 +137,39 @@ void main()
     {
         // TODO 6.6 b)
         // Use the uniforms "directionalLight" and "objectColor" to compute "colorDirectional". 
-        colorDirectional = vec3(0); //<- change this line
-
+        colorDirectional = phong(
+          directionalLight, objectColor, n, directionalLight.direction, v);
     }
 
     if(pointLight.enable)
     {
         //TODO 6.6 c)
         //Use the uniforms "pointLight" and "objectColor" to compute "colorPoint".
-        colorPoint = vec3(0); //<- change this line
+        vec3 xp = pointLight.position - positionWorldSpace;
+        float r = length(xp) * length(xp);
 
+        colorPoint = phong(pointLight, objectColor, n, normalize(xp), v) / (
+          pointLight.attenuation[0] +
+          pointLight.attenuation[1] * r +
+          pointLight.attenuation[2] * r * r
+        );
     }
 
     if(spotLight.enable)
     {
         //TODO 6.6 d)
         //Use the uniforms "spotLight" and "objectColor" to compute "colorSpot".
-        colorSpot = vec3(0); //<- change this line
+        vec3 xp = spotLight.position - positionWorldSpace;
+        float r = length(xp) * length(xp);
+        float a = degrees(acos(normalize(dot(xp, positionWorldSpace))));
 
+        if(a < spotLight.angle) {
+          colorSpot = phong(spotLight, objectColor, n, spotLight.direction, v) / (
+            spotLight.attenuation[0] +
+            spotLight.attenuation[1] * r +
+            spotLight.attenuation[2] * r * r
+          );
+        }
     }
 
 
