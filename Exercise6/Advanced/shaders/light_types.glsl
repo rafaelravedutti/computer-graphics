@@ -89,16 +89,23 @@ vec3 phong(
 	//as well as the other function parameters.
 
     vec3 color_ambient;
-    vec3 color_diffuse = vec3(0);
+    vec3 color_diffuse;
     vec3 color_specular;
     vec3 r = 2 * dot(n, l) * n - l;
+    float nv_clamp = 1.0;
 
-    color_ambient = surfaceColor * light.ambientIntensity;
-    color_specular = light.color * light.specularIntensity * pow(dot(v, r), light.shiny);
-
-    if(dot(n, l) > 0 && dot(n, v) > 0) {
-      color_diffuse = surfaceColor * light.diffuseIntensity * dot(n, l);
+    if(dot(n, v) < 0.0) {
+      nv_clamp = 0.0;
     }
+
+    color_ambient =
+      surfaceColor * light.ambientIntensity;
+
+    color_diffuse =
+      light.color * light.diffuseIntensity * clamp(dot(n, l), 0.0, 1.0) * nv_clamp;
+
+    color_specular =
+      light.color * light.specularIntensity * pow(dot(v, r), light.shiny);
 
     return color_ambient + color_diffuse + color_specular;
 }
@@ -146,7 +153,7 @@ void main()
         //TODO 6.6 c)
         //Use the uniforms "pointLight" and "objectColor" to compute "colorPoint".
         vec3 xp = pointLight.position - positionWorldSpace;
-        float r = length(xp) * length(xp);
+        float r = length(xp);
 
         colorPoint = phong(pointLight, objectColor, n, normalize(xp), v) / (
           pointLight.attenuation[0] +
@@ -160,15 +167,20 @@ void main()
         //TODO 6.6 d)
         //Use the uniforms "spotLight" and "objectColor" to compute "colorSpot".
         vec3 xp = spotLight.position - positionWorldSpace;
-        float r = length(xp) * length(xp);
-        float a = degrees(acos(normalize(dot(xp, positionWorldSpace))));
+        float r = length(xp);
+        float a = acos(dot(
+          normalize(positionWorldSpace - spotLight.position), spotLight.direction
+        ));
 
         if(a < spotLight.angle) {
           colorSpot = phong(spotLight, objectColor, n, spotLight.direction, v) / (
             spotLight.attenuation[0] +
             spotLight.attenuation[1] * r +
             spotLight.attenuation[2] * r * r
-          );
+          ) * (1.0 -  smoothstep(
+            spotLight.sharpness * spotLight.angle,
+            spotLight.angle, a
+          ));
         }
     }
 
