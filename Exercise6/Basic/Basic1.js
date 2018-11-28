@@ -379,20 +379,31 @@ var Basic1_3 = function () {
         }
         var albedo = [0, 1, 0];
 
+        let a, b, color_a, color_b, rgb_a, rgb_b;
+
         // draw surface (line segments) using flat shading
         for (var i = 0; i < nLineSegments; ++i) {
 
-            // TODO 6.1c) Implement Gouraud Shading of the line segments - follow the stepwise instructions below:
+            // 6.1c) Implement Gouraud Shading of the line segments - follow the stepwise instructions below:
 
             // 1. Evaluate the color at the vertices using the PhongLighting function.
             //    The normal of the vertices can be assumed to be [-1.0, 0.0] in this subtask.
+            a = lineSegments[i][0];
+            b = lineSegments[i][1];
+            color_a = PhongLighting(context, a, [-1.0, 0.0], eye, pointLight, albedo, false);
+            color_b = PhongLighting(context, b, [-1.0, 0.0], eye, pointLight, albedo, false);
 
 
             // 2. Use the linear gradient stroke style of the context to linearly interpolate the vertex colors over the primitive (https://www.w3schools.com/TAgs/canvas_createlineargradient.asp).
             //    The color triples can be scaled from [0,1] to [0,255] using the function floatToColor().
             //    The start and end points of the line segments are stored in [y,x] order concerning the canvas, remember when using createLinearGradient()!
+            var grd = context.createLinearGradient(a[1], a[0], b[1], b[0]);
+            rgb_a = floatToColor(color_a);
+            rgb_b = floatToColor(color_b);
 
-
+            grd.addColorStop(0, 'rgb(' + rgb_a[0] + ',' + rgb_a[1] + ',' + rgb_a[2] + ')');
+            grd.addColorStop(1, 'rgb(' + rgb_b[0] + ',' + rgb_b[1] + ',' + rgb_b[2] + ')');
+            context.strokeStyle = grd;
 
             // draw line segment
             context.beginPath();
