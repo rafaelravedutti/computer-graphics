@@ -68,33 +68,50 @@ function computeNormals(polygon) {
 function PhongLighting(context, point, normal, eye, pointLight, albedo, showVectors) {
 
 
-    // TODO 6.1a) Implement Phong lighting - follow the stepwise instructions below:
+    // 6.1a) Implement Phong lighting - follow the stepwise instructions below:
 
     // 1. Compute view vector v, light vector l and the reflected light vector r (all pointing away from the point and normalized!).
     //    Note: To help you implementing this task, we draw the computed vectors for the user specified sample point.
     //    Replace the following dummy lines:
-    var v = vec2.fromValues(0, 0);
-    var l = vec2.fromValues(0, 0);
-    var r = vec2.fromValues(0, 0);
+
+    var normalizedx = eye[0] - point[0];
+    var normalizedy = eye[1] - point[1];
+    var d = Math.sqrt(normalizedx*normalizedx + normalizedy*normalizedy);
+
+    var v = vec2.fromValues(normalizedx/d, normalizedy/d);
+    normalizedx = pointLight[0] - point[0];
+    normalizedy = pointLight[1] - point[1];
+    d = Math.sqrt(normalizedx*normalizedx + normalizedy*normalizedy);
+
+    var l = vec2.fromValues(normalizedx/d, normalizedy/d);
+    var dotProduct = 2.0*(normal[0]*l[0] + normal[1]*l[1]);
+    var r = vec2.fromValues(dotProduct*normal[0] - l[0], dotProduct*normal[1] - l[1]);
 
     // 2. Compute the ambient part, use 0.1 * albedo as ambient material property.
-    //    You can check your results by setting "color" (defined below) to only ambient part - 
+    //    You can check your results by setting "color" (defined below) to only ambient part -
     //    this should give you constant dark green.
+    let const_ambient = 0.1;
+    var l_ambiemt = vec3.fromValues(albedo[0] * const_ambient, albedo[1] * const_ambient, albedo[2] * const_ambient);
 
     // 3. Compute the diffuse part, use 0.5 * albedo as diffuse material property.
-    //    You can check your results by setting "color" (defined below) to only diffuse part - 
+    //    You can check your results by setting "color" (defined below) to only diffuse part -
     //    this should give you a color which gets lighter the more the plane's normal coincides with the direction to the light.
+    let const_diffuse = 0.5;
+    var l_diffuse = vec3.fromValues(albedo[0] * const_diffuse, albedo[1] * const_diffuse, albedo[2] * const_diffuse);
 
-    // 4. Compute the specular part, assume an attenuated white specular material property (0.4 * [1.0, 1.0, 1.0]).
+    // 4. Compute the specular part, assume an attenuated white specular material property Kspec = (0.4 * [1.0, 1.0, 1.0]).
     //    Use the defined shiny factor.
-    //    You can check your results by setting "color" (defined below) to only diffuse part - 
+    //    You can check your results by setting "color" (defined below) to only diffuse part -
     //    this should give you a grey spotlight where view direction and reflection vector coincide.
     var shiny = 30.0;
+    let aux = Math.pow(r[0]*v[0] + r[1]*v[1], shiny);
+    var l_spec = vec3.fromValues(0.4 * aux, 0.4 * aux, 0.4 * aux);
 
     // 5. Add ambient, diffuse and specular color.
     //    Store the result in the variable color - replace the following dummy line:
-    var color = vec3.create();
-
+    // var color = vec3.create(albedo[0], albedo[1], albedo[2]);
+    var color =  vec3.fromValues(l_ambiemt[0] + l_diffuse[0] + l_spec[0],
+      l_ambiemt[1] + l_diffuse[1] + l_spec[1], l_ambiemt[2] + l_diffuse[2] + l_spec[2]);
 
 
 
@@ -257,18 +274,28 @@ var Basic1_2 = function () {
         }
         var albedo = [0, 1, 0];
 
+        let a, b, color, d, m = vec2.create(), normalVector = vec2.create();
         // draw surface (line segments) using flat shading
         for (var i = 0; i < nLineSegments; ++i) {
             // TODO 6.1b) Implement Flat Shading of the line segments - follow the stepwise instructions below:
 
             // 1. Compute representant of the primitive (-> midpoint on the line segment).
-
+            a = lineSegments[i][0];
+            b = lineSegments[i][1];
+            m[0] = (b[0] + a[0])/2.0;
+            m[1] = (b[1] + a[1])/2.0;
             // 2. Compute the normal of the line segment.
-
+            normalVector[0] = -m[1];
+            normalVector[1] = m[0];
+            d = Math.sqrt(normalVector[0]*normalVector[0] + normalVector[1]*normalVector[1]);
+            normalVector[0] = normalVector[0]/d;
+            normalVector[1] = normalVector[1]/d;
             // 3. Use the function PhongLighting that you implemented in the previous assignment to evaluate the color.
+            color = PhongLighting(context, m, normalVector, eye, pointLight, albedo, false);
 
+            console.log(color);
             // 4. Set the stroke color (use setStrokeStyle() defined in this .js-file).
-
+            setStrokeStyle(context, color);
 
 
             // draw the line segment
@@ -404,4 +431,3 @@ var Basic1_3 = function () {
         }
     }
 }()
-
