@@ -13,10 +13,12 @@ uniform bool specular;
 // TODO 6.2a)	Define a varying variable with
 //				the same name as in the vertex
 //				shader to pass the normal.
+varying vec3 vectorNormal;
 
 // TODO 6.2a)	Define a varying variable with
 //				the same name as in the vertex
 //				shader to pass the position.
+varying vec3 worldPos;
 
 
 void main(void)
@@ -60,7 +62,7 @@ void main(void)
 	//				to the light) and the view vector. To calculate
 	//				the camera position, transform the camera
 	//				position in camera space (easy!) to world space
-	//				using the inverse camera matrix given as a 
+	//				using the inverse camera matrix given as a
 	//				uniform.
 	color_specular = vec3(0);
 
