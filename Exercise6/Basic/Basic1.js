@@ -282,18 +282,15 @@ var Basic1_2 = function () {
             // 1. Compute representant of the primitive (-> midpoint on the line segment).
             a = lineSegments[i][0];
             b = lineSegments[i][1];
-            m[0] = (b[0] + a[0])/2.0;
+            m[0] = a[0];
             m[1] = (b[1] + a[1])/2.0;
             // 2. Compute the normal of the line segment.
-            normalVector[0] = -m[1];
-            normalVector[1] = m[0];
-            d = Math.sqrt(normalVector[0]*normalVector[0] + normalVector[1]*normalVector[1]);
-            normalVector[0] = normalVector[0]/d;
-            normalVector[1] = normalVector[1]/d;
+            normalVector = [-1.0, 0.0];
+
             // 3. Use the function PhongLighting that you implemented in the previous assignment to evaluate the color.
             color = PhongLighting(context, m, normalVector, eye, pointLight, albedo, false);
 
-            console.log(color);
+
             // 4. Set the stroke color (use setStrokeStyle() defined in this .js-file).
             setStrokeStyle(context, color);
 

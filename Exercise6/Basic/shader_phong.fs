@@ -49,7 +49,16 @@ void main(void)
 	//				normalized. Note that the varying variables
 	//				normalized in the vertex shader do not have
 	//				to be still normalized in the fragment shader.
-	color_diffuse = vec3(0);
+	// L_diff = K_diff * Iin * (N dot L)
+
+	//calculate vector pointing to light source
+	vec3 pointing_to_light = -(lightPosition - worldPos);
+	pointing_to_light = normalize(pointing_to_light);
+
+	float normal_dot_light = dot(vectorNormal, pointing_to_light);
+
+	//calculate color
+	color_diffuse = normal_dot_light*k_diff;
 
 	/////////////////////////////////
 	////////  specular term  ////////
@@ -64,7 +73,10 @@ void main(void)
 	//				position in camera space (easy!) to world space
 	//				using the inverse camera matrix given as a
 	//				uniform.
-	color_specular = vec3(0);
+	vec3 r = 2.0*normal_dot_light*(vectorNormal - pointing_to_light);
+	vec3 view = worldPos - vec3(cameraMatrixInverse*vec4(0.0, 0.0, 0.0, 1.0));
+	view = normalize(view);
+	color_specular = vec3(k_spec*pow(dot(view, r), shiny));
 
 
 	///////////////////////////////////

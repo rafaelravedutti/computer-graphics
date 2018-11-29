@@ -33,12 +33,18 @@ void main(void)
 	//				matrix. Do not forget to normalize the normal
 	//				afterwards.
 
+	// Calculate the world space = multiply by the modelMatrix
+	vectorNormal = vec3(modelMatrix*vec4(vNormal, 1.0));
+	vectorNormal = normalize(vectorNormal);
+
 	// TODO 6.2a)	Assign the position to the varying variable.
 	//				Before you do so, transform it from model
 	//				space to world space. Use the appropriate
 	//				matrix. Do not forget to dehomogenize it
 	//				afterwards.
-
-
+	vec4 aux_pos = modelMatrix*vec4(vVertex, 1.0);
+	worldPos[0] = vVertex[0]/aux_pos[3];
+	worldPos[1] = vVertex[1]/aux_pos[3];
+	worldPos[2] = vVertex[2]/aux_pos[3];
 
 }
