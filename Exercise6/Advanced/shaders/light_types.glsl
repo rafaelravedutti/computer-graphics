@@ -159,7 +159,7 @@ void main()
             spotLight.attenuation[0] +
             spotLight.attenuation[1] * r +
             spotLight.attenuation[2] * r * r
-          ) * (1.0 -  smoothstep(
+          ) * (1.0 - smoothstep(
             spotLight.sharpness * spotLight.angle,
             spotLight.angle, a
           ));
