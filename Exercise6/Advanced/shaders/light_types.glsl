@@ -170,19 +170,41 @@ void main()
 
     if(cellShading)
     {
-        vec3 quantized_color;
-        float brightness = 1.0;
+        vec3 quantized_directional;
+        vec3 quantized_spot;
+        vec3 quantized_point;
 
-        quantized_color = rgb2hsv(colorDirectional + colorSpot + colorPoint);
+        quantized_directional = rgb2hsv(colorDirectional);
+        quantized_spot = rgb2hsv(colorSpot);
+        quantized_point = rgb2hsv(colorPoint);
 
-        if(quantized_color[2] < 0.33) {
-          brightness = 0.0;
-        } else if(quantized_color[2] < 0.66) {
-          brightness = 0.5;
+        if(quantized_directional[2] < 0.33) {
+          quantized_directional[2] = 0.0;
+        } else if(quantized_directional[2] < 0.66) {
+          quantized_directional[2] = 0.5;
+        } else {
+          quantized_directional[2] = 1.0;
+        }
+
+        if(quantized_spot[2] < 0.33) {
+          quantized_spot[2] = 0.0;
+        } else if(quantized_spot[2] < 0.66) {
+          quantized_spot[2] = 0.5;
+        } else {
+          quantized_spot[2] = 1.0;
+        }
+
+        if(quantized_point[2] < 0.33) {
+          quantized_point[2] = 0.0;
+        } else if(quantized_point[2] < 0.66) {
+          quantized_point[2] = 0.5;
+        } else {
+          quantized_point[2] = 1.0;
         }
  
-        out_color = hsv2rgb(
-          vec3(quantized_color[0], quantized_color[1], brightness));
+        out_color = hsv2rgb(quantized_directional) +
+                    hsv2rgb(quantized_spot) +
+                    hsv2rgb(quantized_point);
         
     }else
     {
