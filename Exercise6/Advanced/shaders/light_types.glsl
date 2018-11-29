@@ -93,7 +93,7 @@ vec3 phong(
       light.color * light.diffuseIntensity * clamp(dot(n, l), 0.0, 1.0) * nv_clamp;
 
     color_specular =
-      light.color * light.specularIntensity * pow(dot(v, r), light.shiny);
+      light.color * light.specularIntensity * pow(clamp(dot(v, r), 0.0, 1.0), light.shiny);
 
     return color_ambient + color_diffuse + color_specular;
 }
@@ -131,7 +131,7 @@ void main()
     if(directionalLight.enable)
     {
         colorDirectional = phong(
-          directionalLight, objectColor, n, directionalLight.direction, v);
+          directionalLight, objectColor, n, -directionalLight.direction, v);
     }
 
     if(pointLight.enable)
@@ -155,7 +155,7 @@ void main()
         ));
 
         if(a < spotLight.angle) {
-          colorSpot = phong(spotLight, objectColor, n, spotLight.direction, v) / (
+          colorSpot = phong(spotLight, objectColor, n, -spotLight.direction, v) / (
             spotLight.attenuation[0] +
             spotLight.attenuation[1] * r +
             spotLight.attenuation[2] * r * r
