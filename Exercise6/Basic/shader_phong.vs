@@ -27,17 +27,19 @@ void main(void)
 	mat4 MVP = projectionMatrix * cameraMatrix * modelMatrix;
 	gl_Position = MVP * vec4(vVertex, 1);
 
-	// TODO 6.2a)	Assign the normal to the varying variable.
+	// 6.2a)	Assign the normal to the varying variable.
 	//				Before you do so, transform it from model
 	//				space to world space. Use the appropriate
 	//				matrix. Do not forget to normalize the normal
 	//				afterwards.
 
 	// Calculate the world space = multiply by the modelMatrix
-	vectorNormal = vec3(modelMatrix*vec4(vNormal, 1.0));
+	vec4 aux = modelMatrix*vec4(vNormal, 1.0);
+	aux = aux/aux[3];
+	vectorNormal = vec3(aux);
 	vectorNormal = normalize(vectorNormal);
 
-	// TODO 6.2a)	Assign the position to the varying variable.
+	// 6.2a)	Assign the position to the varying variable.
 	//				Before you do so, transform it from model
 	//				space to world space. Use the appropriate
 	//				matrix. Do not forget to dehomogenize it
