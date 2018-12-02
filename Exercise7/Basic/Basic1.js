@@ -15,7 +15,7 @@ var Basic1 = function () {
 
     function doAlphaBlending(index, images, alphas) {
 
-        // TODO 8.2:    Compute the blended color (as an array of 3 values
+        // TODO 7.1:    Compute the blended color (as an array of 3 values
         //              in the interval [0, 255]) for one pixel
         //              of the resulting image. "images" is the array
         //              of circle images from left to right, "alphas"
