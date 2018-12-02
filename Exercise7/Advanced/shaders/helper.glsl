@@ -5,8 +5,8 @@
     float theta = 0;
     float phi = 0;
 
-    theta = arctan(n.z / n.x);
-    phi = arccos(n.y);
+    theta = atan(n.z / n.x);
+    phi = acos(n.y);
 
     return vec2(theta,phi);
 }
