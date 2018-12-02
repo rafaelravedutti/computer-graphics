@@ -1,0 +1,5 @@
+With a very small number of line segments the variety of color is small
+even though there are many points inside the segment because the color is interpolated
+(for the Gouraud shading this effect is minimized, but still present).
+For the phong shading the vectors used in the calculations are interpolated (normals and positions),
+giving each fragment its own lighting, and a smoother transition.

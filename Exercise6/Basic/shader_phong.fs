@@ -10,12 +10,12 @@ uniform bool ambient;
 uniform bool diffuse;
 uniform bool specular;
 
-// TODO 6.2a)	Define a varying variable with
+// 6.2a)	Define a varying variable with
 //				the same name as in the vertex
 //				shader to pass the normal.
 varying vec3 vectorNormal;
 
-// TODO 6.2a)	Define a varying variable with
+// 6.2a)	Define a varying variable with
 //				the same name as in the vertex
 //				shader to pass the position.
 varying vec3 worldPos;
@@ -41,7 +41,7 @@ void main(void)
 	////////  diffuse term  ////////
 	////////////////////////////////
 
-	// TODO 6.2a)	Compute the diffuse color like shown
+	// 6.2a)	Compute the diffuse color like shown
 	//				in the lecture. Use k_diff.
 	//				For the dot product, you need the normal
 	//				and the vector from the fragment to the
@@ -49,10 +49,11 @@ void main(void)
 	//				normalized. Note that the varying variables
 	//				normalized in the vertex shader do not have
 	//				to be still normalized in the fragment shader.
+
 	// L_diff = K_diff * Iin * (N dot L)
 
 	//calculate vector pointing to light source
-	vec3 pointing_to_light = -(lightPosition - worldPos);
+	vec3 pointing_to_light = (lightPosition - worldPos);
 	pointing_to_light = normalize(pointing_to_light);
 
 	float normal_dot_light = dot(vectorNormal, pointing_to_light);
@@ -64,7 +65,7 @@ void main(void)
 	////////  specular term  ////////
 	/////////////////////////////////
 
-	// TODO 6.2b)	Compute the specular color like shown
+	// 6.2b)	Compute the specular color like shown
 	//				in the lecture. Use k_spec and shiny.
 	//				For the dot product, you need the reflection
 	//				vector (computed from the normal and the vector
@@ -74,7 +75,9 @@ void main(void)
 	//				using the inverse camera matrix given as a
 	//				uniform.
 	vec3 r = 2.0*normal_dot_light*(vectorNormal - pointing_to_light);
-	vec3 view = worldPos - vec3(cameraMatrixInverse*vec4(0.0, 0.0, 0.0, 1.0));
+	vec4 aux = cameraMatrixInverse*vec4(0.0, 0.0, 0.0, 1.0);
+	aux = aux/aux[3];
+	vec3 view = worldPos - vec3(aux);
 	view = normalize(view);
 	color_specular = vec3(k_spec*pow(dot(view, r), shiny));
 
