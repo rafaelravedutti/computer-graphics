@@ -115,17 +115,19 @@ void main() {
 		
         if(useColor) //Note: 'useColor' is passed as a uniform and can be enabled in the GUI.
         {
-            dayColor = vec3(1); //<- TODO: read from the texture 'earthColor' here
-            nightColor = vec3(0); //<- TODO: read from the texture 'earthNight' here
+            dayColor = texture(earthColor, tc);
+            nightColor = texture(earthNight, tc);
         }
 
-        vec3 color_diffuse = sunColor * dayColor * max(0, dot(n, l)); // <- change this line for 7.5a)
+        vec3 color_diffuse = sunColor * mix(nightColor, dayColor, max(0, dot(n, l)));
 
         // TODO 7.5 b)
         // Read and use the specular intensity value stored in the 'earthSpec' texture.
 		// The texture stores values between 0 and 1. Scale these values to [0, 0.7] and 
 		// then clamp values smaller than 0.2 to 0.2 to obtain a natural look.
-        vec3 color_specular = sunColor * pow(max(0.0, dot(v, r)), 20); // <-- modify this line with the specular intensity value
+
+	vec3 earthSpecColor = clamp(texture(earthSpec, tc) * 0.7, 0.2, 0.7);
+        vec3 color_specular = sunColor * pow(max(0.0, dot(v, r)), 20) * earthSpecColor;
 
 
         color = color_diffuse + color_specular;

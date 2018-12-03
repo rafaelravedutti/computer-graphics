@@ -48,7 +48,7 @@ vec2 sphericalToTexture(vec2 a)
     }
 
     if(uv.y > 1.0) {
-      uv.y = 1.0 - uv.y;
+      uv.y = 2.0 - uv.y;
     }
 
     return uv;
