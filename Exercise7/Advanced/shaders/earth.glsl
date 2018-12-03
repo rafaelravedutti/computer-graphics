@@ -115,8 +115,8 @@ void main() {
 		
         if(useColor) //Note: 'useColor' is passed as a uniform and can be enabled in the GUI.
         {
-            dayColor = texture(earthColor, tc);
-            nightColor = texture(earthNight, tc);
+            dayColor = vec3(texture(earthColor, tc));
+            nightColor = vec3(texture(earthNight, tc));
         }
 
         vec3 color_diffuse = sunColor * mix(nightColor, dayColor, max(0, dot(n, l)));
@@ -126,8 +126,8 @@ void main() {
 		// The texture stores values between 0 and 1. Scale these values to [0, 0.7] and 
 		// then clamp values smaller than 0.2 to 0.2 to obtain a natural look.
 
-	vec3 earthSpecColor = clamp(texture(earthSpec, tc) * 0.7, 0.2, 0.7);
-        vec3 color_specular = sunColor * pow(max(0.0, dot(v, r)), 20) * earthSpecColor;
+	vec3 earthSpecColor = clamp(vec3(texture(earthSpec, tc)) * 0.7, 0.2, 0.7);
+        vec3 color_specular = earthSpecColor * sunColor * pow(max(0.0, dot(v, r)), 20);
 
 
         color = color_diffuse + color_specular;

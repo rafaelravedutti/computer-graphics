@@ -30,14 +30,14 @@ void main() {
 
     // 1. Compute world position of current fragment.
 	//	  Use the matrix 'projView' to do so.
-    vec4 wp = position * inverse(projView);
+    vec4 wp = vec4(position, 1) * inverse(projView);
 
     // 2. Compute view direction.
 	//	  Use the variable 'cameraPos' to do so.
-    vec3 direction = normalize(wp - cameraPos);
+    vec3 direction = normalize(cameraPos - vec3(wp));
 
     // 3. Convert view direction to texture coordinates and read from the 'color' texture.
-    vec2 tc = sphericalToTexture(direction);
+    vec2 tc = sphericalToTexture(vec2(direction));
     out_color = texture(color,tc);
 
 
