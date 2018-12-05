@@ -25,19 +25,6 @@ var Basic1 = function () {
         //              the green color channel of the current pixel
         //              in the third image.
 
-       //  var blendCircles = [1, 1, 1];
-       //
-       // for (var i=0; i < images.length; ++i){
-       //     if (images[i][index + 3])
-       //     {
-       //         blendCircles[0] = (blendCircles[0] * (1- alphas[i])) + ((images[i][index  ]/255.0) * alphas[i]);
-       //         blendCircles[1] = (blendCircles[1] * (1- alphas[i])) + ((images[i][index+1]/255.0) * alphas[i]);
-       //         blendCircles[2] = (blendCircles[2] * (1- alphas[i])) + ((images[i][index+2]/255.0) * alphas[i]);
-       //     }
-       // }
-       //
-       // return [blendCircles[0]*255,blendCircles[1]*255,blendCircles[2]*255];
-
 
         // 1. Set up a color as a return value, and initialize it with the
         //    desired background color.

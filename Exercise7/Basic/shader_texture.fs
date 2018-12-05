@@ -34,7 +34,7 @@ void main(void) {
 	vec3 n;
 	vec3 color;
 	if (cobblestone) {
-		// TODO 7.3b):	Read the RGB value from the normal
+		// 7.3b):	Read the RGB value from the normal
 		//				map provided in cobblestoneTexture.
 		//				Map it from [0,1] to [-1,1] and set
 		//				the normal accordingly. The plane
