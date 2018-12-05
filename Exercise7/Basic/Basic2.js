@@ -100,11 +100,16 @@ var Basic2_1 = function () {
             var M = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, -2.0, -1.0, 0.0, 0.0, -3.0, 0.0];
 
 
-            // TODO 7.2
+            // 7.2
             // Project triangle (Use the helper functions matrixVectorProduct and dehomogenize defined above.).
             // Then render the projected triangle instead of the original triangle!
             // Replace this dummy line!
-            drawTriangle(context, canvasWidth, canvasHeight, triangle, ["A'", "B'", "C'"]);
+            var newA = dehomogenize(matrixVectorProduct(M, [triangle[0][0], triangle[0][1], triangle[0][2], 1.0]));
+
+            var newB = dehomogenize(matrixVectorProduct(M, [triangle[1][0], triangle[1][1], triangle[1][2], 1.0]));
+            var newC = dehomogenize(matrixVectorProduct(M, [triangle[2][0], triangle[2][1], triangle[2][2], 1.0]));
+
+            drawTriangle(context, canvasWidth, canvasHeight, [newA, newB, newC], ["A'", "B'", "C'"]);
 
 
 
@@ -139,12 +144,23 @@ var Basic2_2 = function () {
 
             // TODO 7.2
             // 1. Project the triangle.
+            var newA = dehomogenize(matrixVectorProduct(M, [triangle[0][0], triangle[0][1], triangle[0][2], 1.0]));
 
+            var newB = dehomogenize(matrixVectorProduct(M, [triangle[1][0], triangle[1][1], triangle[1][2], 1.0]));
+            var newC = dehomogenize(matrixVectorProduct(M, [triangle[2][0], triangle[2][1], triangle[2][2], 1.0]));
+
+            drawTriangle(context, canvasWidth, canvasHeight, [newA, newB, newC], ["A'", "B'", "C'"]);
             // 2. Compute the midpoints of the edges (Use the helper function midPoint defined above!)
             //    and store them in another triangle.
 
-            // 3. Draw the triangles (Leave last argument undefined for inner triangle!).
+            var midPointAB = midPoint(newA, newB);
 
+            var midPointAC = midPoint(newA, newC);
+
+            var midPointBC = midPoint(newB, newC);
+
+            // 3. Draw the triangles (Leave last argument undefined for inner triangle!).
+            drawTriangle(context, canvasWidth, canvasHeight, [midPointAB, midPointAC, midPointBC], undefined);
 
 
             // draw axis
@@ -184,13 +200,30 @@ var Basic2_3 = function () {
 
             // TODO 7.2
             // 1. Project the triangle and store it in homogeneous coordinates.
+            var newA = (matrixVectorProduct(M, [triangle[0][0], triangle[0][1], triangle[0][2], 1.0]));
+
+            var newB = (matrixVectorProduct(M, [triangle[1][0], triangle[1][1], triangle[1][2], 1.0]));
+            var newC = (matrixVectorProduct(M, [triangle[2][0], triangle[2][1], triangle[2][2], 1.0]));
 
             // 2. Compute the mid points, but this time in homogeneous coordinates (Make use of midPoint()!).
+            var midPointAB = midPoint(newA, newB);
+
+            var midPointAC = midPoint(newA, newC);
+
+            var midPointBC = midPoint(newB, newC);
 
             // 3. Dehomogenize the points.
+           newA = dehomogenize(newA);
+
+           newB = dehomogenize(newB);
+           newC = dehomogenize(newC);
+           midPointAB = dehomogenize(midPointAB);
+           midPointAC = dehomogenize(midPointAC);
+           midPointBC = dehomogenize(midPointBC);
 
             // 4. Draw the triangles (Leave last argument undefined for inner triangle!).
-
+            drawTriangle(context, canvasWidth, canvasHeight, [newA, newB, newC], ["A'", "B'", "C'"]);
+            drawTriangle(context, canvasWidth, canvasHeight, [midPointAB, midPointAC, midPointBC], undefined);
 
             // draw axis
             arrow(context, 15, 285, 15, 255);

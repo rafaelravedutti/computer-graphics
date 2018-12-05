@@ -13,9 +13,10 @@ uniform mat4 normalMatrix;
 varying vec3 normal;
 varying vec3 position;
 
-// TODO 7.3a):	Define a varying variable
+// 7.3a):	Define a varying variable
 //				representing the texture
 //				coordinates.
+varying vec2 textureCoord;
 
 void main(void)
 {
@@ -27,10 +28,10 @@ void main(void)
 	vec4 pos = modelMatrix * vec4(vVertex, 1);
 	position = pos.xyz / pos.w;
 
-	// TODO 7.3a):	Pass the texture coordinate
-	//				attribute to the corresponding 
+	// 7.3a):	Pass the texture coordinate
+	//				attribute to the corresponding
 	//				varying variable.
-
+	textureCoord = vTexCoord;
 
 
 }

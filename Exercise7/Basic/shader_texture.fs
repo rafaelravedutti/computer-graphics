@@ -7,23 +7,25 @@ uniform vec2 planeSize;
 
 uniform bool cobblestone;
 
-// TODO 7.3a):	Define the checkerboard 
+// 7.3a):	Define the checkerboard
 //				texture as a "uniform sampler2D".
-//				Find out which name it should 
+//				Find out which name it should
 //				have from Basic3.js!
+uniform sampler2D checkerboardTexture;
 
-// TODO 7.3b):	Define the cobblestone 
+// 7.3b):	Define the cobblestone
 //				texture as a "uniform sampler2D".
-//				Find out which name it should 
+//				Find out which name it should
 //				have from Basic3.js!
+uniform sampler2D cobblestoneTexture;
 
 varying vec3 normal;
 varying vec3 position;
 
-// TODO 7.3a):	Define a varying variable
+// 7.3a):	Define a varying variable
 //				representing the texture
 //				coordinates.
-
+varying vec2 textureCoord;
 
 void main(void) {
 
@@ -32,25 +34,32 @@ void main(void) {
 	vec3 n;
 	vec3 color;
 	if (cobblestone) {
-		color = vec3(0.5, 0.5, 0.5);
 		// TODO 7.3b):	Read the RGB value from the normal
 		//				map provided in cobblestoneTexture.
 		//				Map it from [0,1] to [-1,1] and set
 		//				the normal accordingly. The plane
-		//				should be covered with one single 
+		//				should be covered with one single
 		//				instance of the normal map. Therefore,
 		//				the texture coordinates have to be
 		//				scaled accordingly. Replace the following
 		//				dummy line.
-		n = normal;
+		color = vec3(0.5, 0.5, 0.5);
+
+		vec4 aux = texture2D(cobblestoneTexture, textureCoord / planeSize);
+
+		//remapping
+		n = vec3((aux[0]*2.0)-1.0,(aux[1]*2.0)-1.0,(aux[2]*2.0)-1.0);
+
 	}
 	else {
 		n = normal;
-		// TODO 7.3a):	Read the RGB value from the texture
+		// 7.3a):	Read the RGB value from the texture
 		//				using the function texture2D() and
 		//				the texture coordinates. Replace the
 		//				following dummy line.
-		color = vec3(0.5, 0.5, 0.5);
+		vec4 aux = texture2D(checkerboardTexture, textureCoord);
+
+		color = vec3(aux[0]*aux[3],aux[1]*aux[3],aux[2]*aux[3]);
 	}
 
 	vec3 k_amb = 0.1 * color;

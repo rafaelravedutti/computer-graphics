@@ -1,0 +1,13 @@
+b. Compute the centers of the edges PA′,B′, PB′,C′ and PC′,A′ from A′, B′ and C′. Is the drawn inner triangle perspectively correct?
+Which interpolation method do you know that would provide the same result?
+
+No, it's not correct because the interpolation is done according to the projected points. So the real
+distance between vertices is not used to calculate the position of the inner triangle.
+
+
+c. Compute the transformed and dehomogenized centers of the edges P′A,B, P′B,C and P′C,A from PA,B, PB,C and PC,A.
+Is the drawn inner triangle perspectively correct?
+
+Yes, now it is correct because the inner triangle is computed from the "original" coordinates,
+which means it "takes in consideration" the real distance of the vertices and the projection
+is more pronounced (given that the points B and C are far from the plane).
