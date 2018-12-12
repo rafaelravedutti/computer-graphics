@@ -174,10 +174,13 @@ void main() {
 			// cloud value of 0, the dayColor should not 
 			// be diminished at all. For all values in between,
 			// you should interpolate!
-            float clouds = 0.5f;
-            dayColor *=  clouds; 
-		}
-		vec3 color_diffuse = sunColor * mix(nightColor, dayColor, max(0, dot(n, l)));
+            vec4 cloud_tex = texture(earthClouds, tc);
+            float clouds = cloud_tex.x * clamp(dot(n, l), 0, 1);
+
+            dayColor *= mix(1.0, 0.2, clouds);
+	}
+
+	vec3 color_diffuse = sunColor * mix(nightColor, dayColor, max(0, dot(n, l)));
 
 
 

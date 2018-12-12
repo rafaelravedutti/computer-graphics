@@ -40,13 +40,14 @@ in vec3 positionWorldSpace;
 
 
 void main() {
+    vec4 cloud_tex = texture(earthClouds, tc);
 
-    // TODO 8.3 d)
-    // - Display clouds with the 'earthClouds' texture.
-    // - Make sure you don't see clouds on the night side of the earth. 
-	//   You can reach this goal by taking the dot product 
-	//   between normal and direction to the light into account again.
-    float cloudAlpha = 0.5;
+    float dot_prod = dot(
+        normal,
+        normalize(sunPosition - positionWorldSpace)
+    );
+
+    float cloudAlpha = cloud_tex.x * clamp(dot_prod, 0, 1);
 
     out_color = vec4(1,1,1,cloudAlpha);
 }
