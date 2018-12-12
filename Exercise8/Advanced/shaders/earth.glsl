@@ -131,9 +131,9 @@ void main() {
     }
     if(normalMethod == 1)
     {
-        mat3 TBN = mat3(tangent, bitangent, normal);
+        mat3 TBN = mat3(normalize(tangent), normalize(bitangent), normalize(normal));
         vec4 earth_n = texture(earthNormal, tc);
-        n = TBN * ((vec3(earth_n) * 2) - vec3(1, 1, 1));
+        n = TBN * ((normalize(vec3(earth_n)) * 2) - vec3(1, 1, 1));
     }
     if(normalMethod == 2)
     {
@@ -142,12 +142,17 @@ void main() {
         // - Use the formula on the exercise sheet to compute T and B.
         // - Compute the world space normal similar to 8.3 a).
 
-        mat3 TBN = mat3(
-                    vec3(1,0,0),
-                    vec3(0,1,0),
-                    vec3(0,0,1)
-                    );
-        n = vec3(0);
+        vec3 px = dFdx(positionWorldSpace);
+        vec3 py = dFdy(positionWorldSpace);
+        vec2 cx = dFdx(vec2(tc));
+        vec2 cy = dFdy(vec2(tc));
+
+        vec4 earth_n = texture(earthNormal, tc);
+        vec3 tangent_ = cross(py, normal) * cx.x + cross(normal, px) * cy.x;
+        vec3 bitangent_ = cross(py, normal) * cx.y + cross(normal, px) * cy.y;
+
+        mat3 TBN = mat3(normalize(tangent_), normalize(bitangent_), normalize(normal));
+        n = TBN * ((normalize(vec3(earth_n)) * 2) - vec3(1, 1, 1));
     }
 
 
