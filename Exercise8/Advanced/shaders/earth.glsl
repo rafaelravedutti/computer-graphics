@@ -81,10 +81,8 @@ void main()
 
     if(translateVertices)
     {
-        // TODO 8.3 c)
-        // Translate object space vertices ('positionObjectSpace') along object space normals ('normalObject').
-        // Use the texture 'earthBump' and the uniform 'heightScale'.
-        positionObjectSpace += vec3(0);
+        vec4 bump_tex = texture(earthBump, tc);
+        positionObjectSpace += normalObject * bump_tex.x * heightScale;
     }
 
     positionWorldSpace = vec3(model * vec4(positionObjectSpace, 1));
@@ -132,8 +130,8 @@ void main() {
     if(normalMethod == 1)
     {
         mat3 TBN = mat3(normalize(tangent), normalize(bitangent), normalize(normal));
-        vec4 earth_n = texture(earthNormal, tc);
-        n = TBN * ((normalize(vec3(earth_n)) * 2) - vec3(1, 1, 1));
+        vec4 earth_tex = texture(earthNormal, tc);
+        n = TBN * ((vec3(earth_tex) * 2) - vec3(1, 1, 1));
     }
     if(normalMethod == 2)
     {
@@ -142,12 +140,12 @@ void main() {
         vec2 cx = dFdx(vec2(tc));
         vec2 cy = dFdy(vec2(tc));
 
-        vec4 earth_n = texture(earthNormal, tc);
+        vec4 earth_tex = texture(earthNormal, tc);
         vec3 tangent_ = cross(py, normal) * cx.x + cross(normal, px) * cy.x;
         vec3 bitangent_ = cross(py, normal) * cx.y + cross(normal, px) * cy.y;
 
         mat3 TBN = mat3(normalize(tangent_), normalize(bitangent_), normalize(normal));
-        n = TBN * ((normalize(vec3(earth_n)) * 2) - vec3(1, 1, 1));
+        n = TBN * ((vec3(earth_tex) * 2) - vec3(1, 1, 1));
     }
 
 
