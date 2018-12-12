@@ -137,11 +137,6 @@ void main() {
     }
     if(normalMethod == 2)
     {
-        // TODO 8.3 b)
-        // - Compute the screen space derivatives of the position and texture coordinates with dFdx(...) and dFdy(...).
-        // - Use the formula on the exercise sheet to compute T and B.
-        // - Compute the world space normal similar to 8.3 a).
-
         vec3 px = dFdx(positionWorldSpace);
         vec3 py = dFdy(positionWorldSpace);
         vec2 cx = dFdx(vec2(tc));
