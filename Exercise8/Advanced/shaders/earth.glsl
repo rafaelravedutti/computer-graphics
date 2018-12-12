@@ -167,13 +167,6 @@ void main() {
 		}
         if(useClouds)
         {
-            // TODO 8.3 d)
-            // Diminish dayColor to fake cloud shadows.
-			// For a cloud value of 1, the dayColor should 
-			// be diminished by a factor of 0.2. For a
-			// cloud value of 0, the dayColor should not 
-			// be diminished at all. For all values in between,
-			// you should interpolate!
             vec4 cloud_tex = texture(earthClouds, tc);
             float clouds = cloud_tex.x * clamp(dot(n, l), 0, 1);
 
