@@ -75,20 +75,14 @@ void main()
 
     if(normalMethod == 1) //Vertex TBN
     {
-        // TODO 8.3 a)
-        // Compute tangent and bitangent for this vertex.
-        // Hint: Compute them in object space (where 'normalObject' is already given)
-		// and then transform them to world space using the model matrix 'model'!
-        tangent = vec3(0);
-        bitangent = vec3(0);
+        tangent = cross(vec3(0, 1, 0), normal);
+        bitangent = cross(normal, tangent);
     }
 
     if(translateVertices)
     {
-        // TODO 8.3 c)
-        // Translate object space vertices ('positionObjectSpace') along object space normals ('normalObject').
-        // Use the texture 'earthBump' and the uniform 'heightScale'.
-        positionObjectSpace += vec3(0);
+        vec4 bump_tex = texture(earthBump, tc);
+        positionObjectSpace += normalObject * bump_tex.x * heightScale;
     }
 
     positionWorldSpace = vec3(model * vec4(positionObjectSpace, 1));
@@ -135,33 +129,23 @@ void main() {
     }
     if(normalMethod == 1)
     {
-        // TODO 8.3 a)
-        // Compute TBN matrix from vertex shader inputs: 'tangent', 'bitangent', and 'normal'.
-        // Load normal from the texture and transform it to world space.
-		// Note that all directions (with components in [-1, 1]) are stored in a textures
-		// which only supports positive values. That is why you have to map the normal 
-		// from [0, 1] back to [-1, 1] before you can transform it with the TBN matrix.
-        // The final normal in world space should be stored in 'n'.
-        mat3 TBN = mat3(
-                    vec3(1,0,0),
-                    vec3(0,1,0),
-                    vec3(0,0,1)
-                    );
-        n = vec3(0);
+        mat3 TBN = mat3(normalize(tangent), normalize(bitangent), normalize(normal));
+        vec4 earth_tex = texture(earthNormal, tc);
+        n = TBN * ((vec3(earth_tex) * 2) - vec3(1, 1, 1));
     }
     if(normalMethod == 2)
     {
-        // TODO 8.3 b)
-        // - Compute the screen space derivatives of the position and texture coordinates with dFdx(...) and dFdy(...).
-        // - Use the formula on the exercise sheet to compute T and B.
-        // - Compute the world space normal similar to 8.3 a).
+        vec3 px = dFdx(positionWorldSpace);
+        vec3 py = dFdy(positionWorldSpace);
+        vec2 cx = dFdx(vec2(tc));
+        vec2 cy = dFdy(vec2(tc));
 
-        mat3 TBN = mat3(
-                    vec3(1,0,0),
-                    vec3(0,1,0),
-                    vec3(0,0,1)
-                    );
-        n = vec3(0);
+        vec4 earth_tex = texture(earthNormal, tc);
+        vec3 tangent_ = cross(py, normal) * cx.x + cross(normal, px) * cy.x;
+        vec3 bitangent_ = cross(py, normal) * cx.y + cross(normal, px) * cy.y;
+
+        mat3 TBN = mat3(normalize(tangent_), normalize(bitangent_), normalize(normal));
+        n = TBN * ((vec3(earth_tex) * 2) - vec3(1, 1, 1));
     }
 
 
@@ -183,17 +167,13 @@ void main() {
 		}
         if(useClouds)
         {
-            // TODO 8.3 d)
-            // Diminish dayColor to fake cloud shadows.
-			// For a cloud value of 1, the dayColor should 
-			// be diminished by a factor of 0.2. For a
-			// cloud value of 0, the dayColor should not 
-			// be diminished at all. For all values in between,
-			// you should interpolate!
-            float clouds = 0.5f;
-            dayColor *=  clouds; 
-		}
-		vec3 color_diffuse = sunColor * mix(nightColor, dayColor, max(0, dot(n, l)));
+            vec4 cloud_tex = texture(earthClouds, tc);
+            float clouds = cloud_tex.x * clamp(dot(n, l), 0, 1);
+
+            dayColor *= mix(1.0, 0.2, clouds);
+	}
+
+	vec3 color_diffuse = sunColor * mix(nightColor, dayColor, max(0, dot(n, l)));
 
 
 
