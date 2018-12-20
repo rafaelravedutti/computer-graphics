@@ -36,9 +36,21 @@ void FPSCamera::turn(vec2 relMouseMovement)
 	//	 Otherwise, only use the rotation around the y axis.
 
 
-    // compute newOrientation from currentTransformation.orientation
-    Quaternion newOrientation;
+    Quaternion qx(vec3(0, 1, 0), dx);
+    Quaternion qy(vec3(1, 0, 0), dy);
 
+    qx.normalize();
+    qy.normalize();
+
+    // compute newOrientation from currentTransformation.orientation
+    Quaternion newOrientation, yrot;
+
+    newOrientation = currentTransformation.orientation * qx;
+    yrot = qy * newOrientation;
+
+    if((yrot * vec3(0, 1, 0)).y > 0) {
+      newOrientation = yrot;
+    }
 
     // When you are done, set current transformation and last transformation so that we do not interpolate mouse motion
     // (Don't change these two lines!).
@@ -64,6 +76,7 @@ void FPSCamera::updatePosition(float dt)
     bool aPressed = keyBoardState[SDL_SCANCODE_A];
     bool sPressed = keyBoardState[SDL_SCANCODE_S];
     bool dPressed = keyBoardState[SDL_SCANCODE_D];
+    bool spcPressed = keyBoardState[SDL_SCANCODE_SPACE];
 
     if(wPressed) {
       translate(0.0, -1.0, dt);
@@ -92,6 +105,12 @@ void FPSCamera::updatePosition(float dt)
     // - y should not drop below startY.
     float& y = currentTransformation.position.y;
 
+    if(y == startY && spcPressed) {
+      vy = 3;
+    }
+
+    y = max(y + vy * dt, startY);
+    vy -= 9.81 * dt;
 }
 
 void FPSCamera::updateOrientation(bool capture)
