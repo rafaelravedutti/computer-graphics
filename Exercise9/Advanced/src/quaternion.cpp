@@ -3,19 +3,12 @@
 
 Quaternion::Quaternion()
 {
-    // TODO 9.3 a)
-    // Initialize the real and imaginary part with a zero degree rotation.
-    // Note: The length must still be 1!
-
     real = 0.0;
     img = vec3(0.0);
 }
 
 Quaternion::Quaternion(vec3 axis, float angle)
 {
-    // TODO 9.3 a)
-    // Initialize with classic axis angle rotation as defined in the lecture.
-
     real = cos(angle / 2);
     img.x = axis.x * sin(angle / 2);
     img.y = axis.y * sin(angle / 2);
@@ -61,16 +54,12 @@ mat4 Quaternion::toMat4()
 
 float Quaternion::norm() const
 {
-    // TODO 9.3 b)
-    // Compute the L2 norm of this vector.
     return sqrt(real*real + img.x*img.x + img.y*img.y + img.z*img.z);
 
 }
 
 Quaternion Quaternion::normalize()
 {
-    // TODO 9.3 b)
-    // Normalize this quaternion.
     float norm = this->norm();
 
     real /= norm;
@@ -82,8 +71,6 @@ Quaternion Quaternion::normalize()
 
 Quaternion Quaternion::conjugate() const
 {
-    // TODO 9.3 b)
-	// Return the conjugate of this quaternion.
     Quaternion result;
 
     result.real = real;
@@ -95,8 +82,6 @@ Quaternion Quaternion::conjugate() const
 
 Quaternion Quaternion::inverse() const
 {
-    // TODO 9.3 b)
-	// Return the inverse of this quaternion.
     Quaternion result;
 
     float l2_norm = norm();
@@ -114,8 +99,6 @@ Quaternion Quaternion::inverse() const
 
 float dot(Quaternion x, Quaternion y)
 {
-    // TODO 9.3 b)
-	// Compute the dot product of x and y.
     return dot(x.img, y.img) + x.real * y.real;
 }
 
@@ -123,9 +106,6 @@ float dot(Quaternion x, Quaternion y)
 
 Quaternion operator*(Quaternion l, Quaternion r)
 {
-    // TODO 9.3 c)
-    // Perform quaternion-quaternion multiplication as defined in the lecture.
-	// Hint: You can use the glm function for vector products.
     Quaternion result;
 
     result.real = l.real * r.real - dot(l.img, r.img);
@@ -137,8 +117,6 @@ Quaternion operator*(Quaternion l, Quaternion r)
 
 vec3 operator*(Quaternion l, vec3 r)
 {
-    // TODO 9.3 c)
-    // Rotate the vector 'r' with the quaternion 'l'.
     Quaternion q0(r, 0);
     Quaternion qm = l * q0 * l.inverse();
 
@@ -148,8 +126,6 @@ vec3 operator*(Quaternion l, vec3 r)
 
 Quaternion operator*(Quaternion l, float r)
 {
-    // TODO 9.3 c)
-    // Perform quaternion-scalar multiplication.
     Quaternion result;
 
     result.real = l.real * r;
@@ -161,8 +137,6 @@ Quaternion operator*(Quaternion l, float r)
 
 Quaternion operator+(Quaternion l, Quaternion r)
 {
-    // TODO 9.3 c)
-	// Return the sum of the two quaternions.
     Quaternion result;
 
     result.real = l.real + r.real;
@@ -178,16 +152,8 @@ Quaternion slerp(Quaternion x, Quaternion y, float t)
 {
 	float epsilon = 0.00001;
 
-    // TODO 9.3 d)
-    // Spherical linear interpolation (slerp) of quaternions.
-
-    // Compute the interpolated quaternion and return it normalized.
-	
     Quaternion result;
     Quaternion diff;
-
-    x.normalize();
-    y.normalize();
 
     float dot_xy = dot(x, y);
 
@@ -196,7 +162,6 @@ Quaternion slerp(Quaternion x, Quaternion y, float t)
       diff.img = y.img - x.img;
 
       result = x + (diff * t);
-      result.normalize();
       return result;
     }
 
