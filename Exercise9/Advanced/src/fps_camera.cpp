@@ -23,18 +23,13 @@ void FPSCamera::turn(vec2 relMouseMovement)
     Quaternion qx(vec3(0, 1, 0), dx);
     Quaternion qy(vec3(1, 0, 0), dy);
 
-    qx.normalize();
-    qy.normalize();
-
     // compute newOrientation from currentTransformation.orientation
-    Quaternion newOrientation, yrot;
+    Quaternion newOrientation, xrot, yrot;
 
-    newOrientation = currentTransformation.orientation * qx;
-    yrot = qy * newOrientation;
+    xrot = qx * currentTransformation.orientation;
+    yrot = xrot * qy;
 
-    if((yrot * vec3(0, 1, 0)).y > 0) {
-      newOrientation = yrot;
-    }
+    newOrientation = yrot;
 
     // When you are done, set current transformation and last transformation so that we do not interpolate mouse motion
     // (Don't change these two lines!).
