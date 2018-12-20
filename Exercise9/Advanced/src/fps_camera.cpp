@@ -18,8 +18,8 @@ void FPSCamera::translate(float dx, float dz, float dt)
 	// Take cameraSpeed into account.
 
     //Change these two lines...
-    vec3 velocity = vec3(1,0,0) * cameraSpeed;
-    currentTransformation.position += vec3(0,1,0) * dt;
+    vec3 velocity = vec3(dx, 0, dz) * cameraSpeed;
+    currentTransformation.position += velocity * dt;
 
 }
 
@@ -60,8 +60,26 @@ void FPSCamera::updatePosition(float dt)
     // S - Backward
     // A - Left
     // D - Right
-    bool dPressed = keyBoardState[SDL_SCANCODE_D]; // example of how to get the keystate
+    bool wPressed = keyBoardState[SDL_SCANCODE_W];
+    bool aPressed = keyBoardState[SDL_SCANCODE_A];
+    bool sPressed = keyBoardState[SDL_SCANCODE_S];
+    bool dPressed = keyBoardState[SDL_SCANCODE_D];
 
+    if(wPressed) {
+      translate(0.0, -1.0, dt);
+    }
+
+    if(aPressed) {
+      translate(-1.0, 0.0, dt);
+    }
+
+    if(sPressed) {
+      translate(0.0, 1.0, dt);
+    }
+
+    if(dPressed) {
+      translate(1.0, 0.0, dt);
+    }
 
 
     // TODO 9.4 c)
