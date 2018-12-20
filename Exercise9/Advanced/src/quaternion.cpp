@@ -71,7 +71,7 @@ Quaternion Quaternion::normalize()
 {
     // TODO 9.3 b)
     // Normalize this quaternion.
-    float norm = this.norm();
+    float norm = this->norm();
 
     real /= norm;
     img /= norm;
@@ -86,7 +86,7 @@ Quaternion Quaternion::conjugate() const
 	// Return the conjugate of this quaternion.
     Quaternion result;
 
-    result.real = real
+    result.real = real;
     result.img = -img;
 
     return result;
@@ -139,8 +139,8 @@ vec3 operator*(Quaternion l, vec3 r)
 {
     // TODO 9.3 c)
     // Rotate the vector 'r' with the quaternion 'l'.
-    Quartenion q0(0, r);
-    Quartenion qm = l * q0 * l.inverse();
+    Quaternion q0(r, 0);
+    Quaternion qm = l * q0 * l.inverse();
 
     return qm.img;
 
@@ -184,6 +184,7 @@ Quaternion slerp(Quaternion x, Quaternion y, float t)
     // Compute the interpolated quaternion and return it normalized.
 	
     Quaternion result;
+    Quaternion diff;
 
     x.normalize();
     y.normalize();
@@ -191,7 +192,10 @@ Quaternion slerp(Quaternion x, Quaternion y, float t)
     float dot_xy = dot(x, y);
 
     if(dot_xy > 1.0 - epsilon) {
-      result = x + t * (y - x);
+      diff.real = y.real - x.real;
+      diff.img = y.img - x.img;
+
+      result = x + (diff * t);
       result.normalize();
       return result;
     }
@@ -199,8 +203,8 @@ Quaternion slerp(Quaternion x, Quaternion y, float t)
     float omega = acos(dot_xy);
     float omega_sin = sin(omega);
 
-    result = (sin((1.0 - t) * omega) / omega_sin) * x +
-             (sin(t * omega)         / omega_sin) * y;
+    result = x * (sin((1.0 - t) * omega) / omega_sin) +
+             y * (sin(t * omega)         / omega_sin);
 
     return result;
 }
