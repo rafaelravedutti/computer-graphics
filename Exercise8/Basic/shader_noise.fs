@@ -19,7 +19,7 @@ out vec4 fragColor;
 //               Distributed under the MIT License. See LICENSE file.
 //               https://github.com/ashima/webgl-noise
 //               https://github.com/stegu/webgl-noise
-// 
+//
 //------------------------------------------------
 
 vec3 mod289(vec3 x) {

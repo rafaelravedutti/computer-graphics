@@ -42,10 +42,11 @@ DepthBuffer.prototype.TestAndSetFragment = function (x, valueF, depthTestMode) {
     var newValue = value;
     var oldValue = this.data[x];
 
-    // TODO 9.1     Implement the depth test based on the depth test mode 
+    // 9.1     Implement the depth test based on the depth test mode
     //              (depthTestMode) and the depth value in fixed point representation.
     //              depthTestMode: 0 = no depth test (always pass), 1 = pass if less, -1 = pass if greater
-    if (true) { // adapt this condition
+    if (depthTestMode == 0 || (depthTestMode > 0 && oldValue > newValue)
+     || (depthTestMode < 0 && oldValue < newValue)) {
         this.data[x] = newValue;
         return true;
     }
@@ -169,16 +170,17 @@ RenderingPipeline.prototype.PrimitiveAssemblyStage = function (vertexStream, ibo
     if (this.verbose) console.log("    - #vertices [in]: " + vertexStream.length);
 
 
-    // TODO 9.1     Implement the primitive assembly stage.
+    // 9.1     Implement the primitive assembly stage.
     //              A primitive consists of two vertices (e.g. primitives[i] = [vertexStream[idx_a], vertexStream[idx_b];).
     //              You have to iterate over all indices in the ibo (every two ibo entries form a primitive,
     //              e.g. ibo[0] and ibo[1] are the indices of the first primitive).
     //              The result can best be seen in the canonical volume.
-    var primitives = new Array(); // Also change the size of this array.
-
-
-
-
+    var primitives = new Array(ibo.length/2); // Also change the size of this array.
+    let j = 0;
+    for (var i = 0; i < ibo.length; i+=2) {
+      primitives[j] = [vertexStream[ibo[i]], vertexStream[ibo[i+1]]];
+      j++;
+    }
 
     if (this.verbose) console.log("    - #primitives [out]: " + primitives.length);
 
@@ -205,10 +207,30 @@ RenderingPipeline.prototype.FaceCullingStage = function (primitives) {
 RenderingPipeline.prototype.LineCulling = function (a, b) {
     // a = [x,z,w],  b = [x,z,w]
 
-    // TODO 9.1     Implement line culling depending on the culling mode (this.culling).
+    // 9.1     Implement line culling depending on the culling mode (this.culling).
     //              this.culling: 0 = false, 1 = backface culling, -1 = frontface culling
     //              The result can best be seen in the canonical volume.
-    return false; // Change this line: At the moment, nothing is culled.
+
+    if(!this.culling){
+      return false;
+    }else if(this.culling > 0){
+      // backface culling
+      var aux_a = [a[0] / a[2], a[1] / a[2]];
+      var aux_b = [b[0] / b[2], b[1] / b[2]];
+      // short version from gl-matrix.js
+      var cross_product = aux_a[0] * aux_b[1] - aux_a[1] * aux_b[0];
+
+      return (cross_product >= 0);
+    }else if(this.culling < 0){
+      // frontface culling
+      var aux_a = [a[0] / a[2], a[1] / a[2]];
+      var aux_b = [b[0] / b[2], b[1] / b[2]];
+      // short version from gl-matrix.js
+      var cross_product = aux_a[0] * aux_b[1] - aux_a[1] * aux_b[0];
+
+      return (cross_product <= 0);
+    }
+
 
 }
 

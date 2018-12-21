@@ -19,7 +19,7 @@ out vec4 fragColor;
 //               Distributed under the MIT License. See LICENSE file.
 //               https://github.com/ashima/webgl-noise
 //               https://github.com/stegu/webgl-noise
-// 
+//
 //------------------------------------------------
 
 vec3 mod289(vec3 x) {
@@ -117,14 +117,18 @@ void main(void) {
 
 
 
-	// TODO 8.2		Follow the steps to implement "MIP mapping" for procedural
+	// 8.2		Follow the steps to implement "MIP mapping" for procedural
 	//				texturing!
 
 	// 1. Compute the texture coordinates in pixel space, using the resolution of the canvas.
 
+	vec2 tc_pixel_pos = vec2(tc.x*iResolution.x, tc.y*iResolution.y);
 
 	// 2. Compute the derivatives of these coordinates - the higher, the farther away the point on the plane is.
 	//	  Use the functions dFdx() and dFdy() provided by GLSL.
+
+	vec2 tc_pixel_posdx = dFdx(tc_pixel_pos);
+  vec2 tc_pixel_posdy = dFdy(tc_pixel_pos);
 
 
 	// 3. Compute the delta value also used by the normal OpenGL MIP mapping procedure.
@@ -132,13 +136,14 @@ void main(void) {
 	//    (https://www.khronos.org/registry/OpenGL/specs/gl/glspec42.core.pdf), but for only two coordinates.
 	//    Subsequently, use delta to compute lambda as in equation 3.17.
 
+	float delta = max(sqrt(tc_pixel_posdx.x*tc_pixel_posdx.x + tc_pixel_posdx.y*tc_pixel_posdx.y),
+	 sqrt(tc_pixel_posdy.x*tc_pixel_posdy.x + tc_pixel_posdy.y*tc_pixel_posdy.y));
+ 	float lambda = log2(delta);
 
 	// 4. The higher lambda is, the farther the fragment is away, so we want to choose a smaller n
 	//    in order to prevent minification. Therefore, choose n as (maxLevel - lambda) and clamp it to
 	//	  the range from 0 to maxLevel. Replace the dummy line that sets n to maxLevel no matter how far the plane is!
-	n = maxLevel;
-
-
+	n = clamp(maxLevel-lambda, 0.0, maxLevel);
 
 	fragColor = vec4(vec3(fbm(tc*baseFreq, n)), 1);
 

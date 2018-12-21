@@ -5,24 +5,32 @@ var Basic2 = function () {
 
     function createBox() {
 
-        // TODO 9.2a)   Set up a shape node, a box node,
+        // 9.2a)   Set up a shape node, a box node,
         //              an appearance node and a material
-        //              node. Use the material node to 
+        //              node. Use the material node to
         //              define the color of the box as white.
-        //              Then, append the material node to the 
-        //              appearance node, both appearance and 
+        //              Then, append the material node to the
+        //              appearance node, both appearance and
         //              box node to the shape node. Return the
         //              shape node.
         //              You will have to make use of the functions
-        //              createElement(), setAttribute() and 
+        //              createElement(), setAttribute() and
         //              appendChild(). You can find examples for
         //              their usage in createScene().
 
         var shape = document.createElement("shape");
+        var box = document.createElement("box");
+        var appearance = document.createElement("appearance");
+        var material = document.createElement("material");
+
+        material.setAttribute("diffusecolor", "1 1 1");
+
+        appearance.appendChild(material);
+        shape.appendChild(appearance);
+
+        shape.appendChild(box);
+
         return shape;
-
-
-
     }
 
     function refine(parents) {
@@ -51,19 +59,24 @@ var Basic2 = function () {
 
     function constructChildTransformation(parent, translation) {
 
-        // TODO 9.2b):  Create a new transformation node
+        // 9.2b):  Create a new transformation node
         //              for one child box (or for further
         //              refinement!). The child box
         //              has to be scaled to one third of
         //              its parent's size, and the translation
-        //              has to be applied. Finally, the 
+        //              has to be applied. Finally, the
         //              new transformation should be appended
         //              to its parent transformation.
         //              Again, use createElement(), setAttribute()
         //              and appendChild().
         //              Replace the following dummy line.
 
-        return parent;
+        var transformation = document.createElement("transform");
+        transformation.setAttribute("translation", translation);
+        transformation.setAttribute("scale", "0.3, 0.3, 0.3");
+
+        parent.appendChild(transformation);
+        return transformation;
 
     }
 
@@ -81,7 +94,7 @@ var Basic2 = function () {
         background.setAttribute("skyColor", "0 0 0.3");
         scene.appendChild(background);
 
-        // create the root transform, which enlarges its contents 
+        // create the root transform, which enlarges its contents
         var transf = document.createElement("transform");
         transf.setAttribute("scale", "2 2 2");
         scene.appendChild(transf);
