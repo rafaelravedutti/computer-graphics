@@ -151,6 +151,14 @@ void main() {
 	// Use "position" which is passed from the vertex shader.
     Ray primaryRay;
 
+    /*
+    vec3 u = vec3(projMatrix[0][0], projMatrix[0][1], projMatrix[0][2]);
+    vec3 v = vec3(projMatrix[1][0], projMatrix[1][1], projMatrix[1][2]);
+    vec3 w = vec3(projMatrix[2][0], projMatrix[2][1], projMatrix[2][2]);
+
+    primaryRay.origin = cameraPos;
+    primaryRay.direction = normalize(w + position.x * u + position.y * v);
+    */
 
     // Trace Primary Ray
     out_color = vec4(trace(primaryRay),1);
