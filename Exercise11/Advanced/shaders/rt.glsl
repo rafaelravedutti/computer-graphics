@@ -140,11 +140,22 @@ vec3 trace(Ray ray)
         // Compute the illumination with Phong shading.
         // Use the uniform "lightDir".
         // Note: The normal and the position of the hitpoint are stored in IntersectionResult.
-		// Use 0.1 as ambient, 0.7 as specular and 1.0 as diffuse coefficient. 
-		// The shininess exponent should be 40. 
-		// Take the variable "sunIntensity" into account.
-		// Replace the following dummy line.
-		color += m.color;
+		    // Use 0.1 as ambient, 0.7 as specular and 1.0 as diffuse coefficient. 
+		    // The shininess exponent should be 40. 
+		    // Take the variable "sunIntensity" into account.
+		    // Replace the following dummy line.
+        //vec3 r = 2 * dot(inter.normal, lightDir) * n - l;
+        //float nv_clamp = 1.0;
+        //
+        //if(dot(inter.normal, inter.hitPosition) < 0.0) {
+        //  nv_clamp = 0.0;
+        //}
+        //
+        //light_color = vec3(sunIntensity);
+        //color += m.color * 0.1;
+        //color += light_color * 1.0 * clamp(dot(inter.normal, lightDir), 0.0, 1.0) * nv_clamp;
+        //color += light_color * 0.7 * pow(clamp(dot(inter.hitPosition, r), 0.0, 1.0), 40);
+        color += m.color;
 
 
         // TODO 11.2 f)
