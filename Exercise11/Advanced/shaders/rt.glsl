@@ -79,16 +79,37 @@ int intersectRayScene(Ray ray, out IntersectionResult result)
         tmp = intersectRaySphere(ray, objectData[i]);
         // TODO:
         // Keep track of the closest intersection
+
+        //if(tmp.isIntersection) {
+        //    if(tMin > tmp.tHit) {
+        //        objectId = i;
+        //        tMin = tmp.tHit;
+        //    }
+        //}
     }
 
     tmp = intersectRayPlane(ray, objectData[PLANE]);
     // TODO:
     // Keep track of the closest intersection
 
+    //if(tmp.isIntersection) {
+    //    if(tMin > tmp.tHit) {
+    //        objectId = PLANE;
+    //        tMin = tmp.tHit;
+    //    }
+    //}
+
 
     tmp = intersectRaySpikeball(ray,objectData[SPIKEBALL]);
     // TODO:
     // Keep track of the closest intersection
+
+    //if(tmp.isIntersection) {
+    //    if(tMin > tmp.tHit) {
+    //        objectId = SPIKEBALL;
+    //        tMin = tmp.tHit;
+    //    }
+    //}
 
     //return object id of closest intersection (object ids defined at the beginning of the fragment shader)
     return objectId;
