@@ -41,7 +41,9 @@ struct Object
 	{
 		// TODO 9.5 b)
 		// Interpolate between the current and last transformation with the interpolation parameter alpha.
-		interpolatedTransformation = currentTransformation;
+		interpolatedTransformation.scale = mix(lastTransformation.scale, currentTransformation.scale, alpha);
+		interpolatedTransformation.position = mix(lastTransformation.position, currentTransformation.position, alpha);
+		interpolatedTransformation.orientation = slerp(lastTransformation.orientation, currentTransformation.orientation, alpha);
 
 	}
 

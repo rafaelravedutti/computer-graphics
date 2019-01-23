@@ -45,9 +45,9 @@ function MipMap(texture1D, nLevelMax) {
 
 
     // TODO 8.1b)   Compute the MIP map pyramid.
-    //              Use a simple boxfilter (same weight for 
+    //              Use a simple boxfilter (same weight for
     //              both contributors) to compute the
-    //              next mipmap level. Assume the dimension of 
+    //              next mipmap level. Assume the dimension of
     //              the texture to be a power of 2.
     for (var l = 1; l < this.nLevel; ++l) {
         // 1. Compute the texture dimension of level 'l'.
@@ -101,22 +101,26 @@ var Basic1a = function () {
         var u = Math.max(Math.min(texCoord[0], 1.0), 0.0) * (texDimU - 1);
         var v = Math.max(Math.min(texCoord[1], 1.0), 0.0) * (texDimV - 1);
 
-
-        // TODO 8.1a)   Implement bilinear interpolation of the texture stored in the global variable "texture"
+        // 8.1a)   Implement bilinear interpolation of the texture stored in the global variable "texture"
         // 1. Given the current uv coordinates, determine the uv coordinates of the 4 surrounding pixels (use Math.floor / Math.ceil).
+        let up_left = [Math.floor(u), Math.floor(v)];
+        let up_right = [Math.floor(u), Math.ceil(v)];
+        let down_left = [Math.ceil(u), Math.floor(v)];
+        let down_right = [Math.ceil(u), Math.ceil(v)];
 
         // 2. Compute the linear indices of the surrounding pixels (e.g. idx = texDimU * v + u;).
-
-        // 3. Interpolate linearly in u (use interpolateColor()). 
-        //    You can access the color at index 'idx' using texture[idx].
+        let index1 = texDimU * up_left[1] + up_left[0];
+        let index2 = texDimU * up_right[1] + up_right[0];
+        let index3 = texDimU * down_left[1] + down_left[0];
+        let index4 = texDimU * down_right[1] + down_right[0];
+        // 3. Interpolate linearly in u (use interpolateColor()).
+        // You can access the color at index 'idx' using texture[idx].
+        let color1 = interpolateColor(texture[index3], texture[index1], down_left[0] - u);
+        let color2 = interpolateColor(texture[index4], texture[index2], down_right[0] - u);
 
         // 4. Interpolate linearly in v (use interpolateColor()).
+        return interpolateColor(color2, color1, down_right[1] - v);
 
-        // replace this line
-        return [0.7, 0.7, 0.7];
-
-
-        return result;
     }
 
     function Render() {
@@ -314,7 +318,7 @@ var Basic1b = function () {
             var pixelCenter_proj = ProjectPointOntoSurfaceLine(eye, line_x, line_minZ, line_maxZ, pixelCenter);
 
 
-            // TODO 8.1b)   Determine the appropriate level based on the footprint of the pixel.
+            //  8.1b)   Determine the appropriate level based on the footprint of the pixel.
             // 1. Use pixelBottom_proj[2] and pixelTop_proj[2] to determine the footprint of the pixel on the texture.
 
 
