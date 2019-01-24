@@ -144,17 +144,14 @@ vec3 trace(Ray ray)
 		    // The shininess exponent should be 40. 
 		    // Take the variable "sunIntensity" into account.
 		    // Replace the following dummy line.
-        //vec3 r = 2 * dot(inter.normal, lightDir) * n - l;
-        //float nv_clamp = 1.0;
+        // vec3 r = 2 * dot(inter.normal, lightDir) * n - l;
+        // float nv_clamp = 1.0;
         //
-        //if(dot(inter.normal, inter.hitPosition) < 0.0) {
-        //  nv_clamp = 0.0;
-        //}
+        // if(dot(inter.normal, inter.hitPosition) < 0.0) {
+        //   nv_clamp = 0.0;
+        // }
         //
-        //light_color = vec3(sunIntensity);
-        //color += m.color * 0.1;
-        //color += light_color * 1.0 * clamp(dot(inter.normal, lightDir), 0.0, 1.0) * nv_clamp;
-        //color += light_color * 0.7 * pow(clamp(dot(inter.hitPosition, r), 0.0, 1.0), 40);
+        // light_color = vec3(sunIntensity);
         color += m.color;
 
 
@@ -163,6 +160,21 @@ vec3 trace(Ray ray)
         // Shoot a ray from the hitpoint towards the sun.
         // Use the uniform shadowFactor.
 
+        // Ray shadowRay;
+        // IntersectionResult shadowInter;
+
+        // shadowRay.origin = inter.hitPosition + EPSILON * inter.normal;
+        // shadowRay.direction = -lightDir;
+
+        // int shadowObjectId = intersectRayScene(shadowRay, shadowInter);
+
+        // if(shadowObjectId == -1) {
+        //     color += m.color * 0.1;
+        //     color += light_color * 1.0 * clamp(dot(inter.normal, lightDir), 0.0, 1.0) * nv_clamp;
+        //     color += light_color * 0.7 * pow(clamp(dot(inter.hitPosition, r), 0.0, 1.0), 40);
+        // } else {
+        //     color += (m.color * 0.1) / (shadowFactor + 0.001);
+        // }
     }
     else
     {
