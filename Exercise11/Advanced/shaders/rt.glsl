@@ -80,36 +80,36 @@ int intersectRayScene(Ray ray, out IntersectionResult result)
         // TODO:
         // Keep track of the closest intersection
 
-        //if(tmp.isIntersection) {
-        //    if(tMin > tmp.tHit) {
-        //        objectId = i;
-        //        tMin = tmp.tHit;
-        //    }
-        //}
+        if(tmp.isIntersection) {
+            if(tMin > tmp.tHit) {
+                objectId = i;
+                tMin = tmp.tHit;
+            }
+        }
     }
 
     tmp = intersectRayPlane(ray, objectData[PLANE]);
     // TODO:
     // Keep track of the closest intersection
 
-    //if(tmp.isIntersection) {
-    //    if(tMin > tmp.tHit) {
-    //        objectId = PLANE;
-    //        tMin = tmp.tHit;
-    //    }
-    //}
+    if(tmp.isIntersection) {
+        if(tMin > tmp.tHit) {
+            objectId = PLANE;
+            tMin = tmp.tHit;
+        }
+    }
 
 
     tmp = intersectRaySpikeball(ray,objectData[SPIKEBALL]);
     // TODO:
     // Keep track of the closest intersection
 
-    //if(tmp.isIntersection) {
-    //    if(tMin > tmp.tHit) {
-    //        objectId = SPIKEBALL;
-    //        tMin = tmp.tHit;
-    //    }
-    //}
+    if(tmp.isIntersection) {
+        if(tMin > tmp.tHit) {
+            objectId = SPIKEBALL;
+            tMin = tmp.tHit;
+        }
+    }
 
     //return object id of closest intersection (object ids defined at the beginning of the fragment shader)
     return objectId;
@@ -144,15 +144,16 @@ vec3 trace(Ray ray)
 		    // The shininess exponent should be 40. 
 		    // Take the variable "sunIntensity" into account.
 		    // Replace the following dummy line.
-        // vec3 r = 2 * dot(inter.normal, lightDir) * n - l;
-        // float nv_clamp = 1.0;
-        //
-        // if(dot(inter.normal, inter.hitPosition) < 0.0) {
-        //   nv_clamp = 0.0;
-        // }
-        //
-        // light_color = vec3(sunIntensity);
-        color += m.color;
+        vec3 r = 2 * dot(inter.normal, lightDir) * inter.normal - lightDir;
+        float nv_clamp = 1.0;
+
+        if(dot(inter.normal, inter.hitPosition) < 0.0) {
+          nv_clamp = 0.0;
+        }
+
+        vec3 light_color = vec3(sunIntensity);
+
+        // color += m.color;
 
 
         // TODO 11.2 f)
@@ -160,21 +161,21 @@ vec3 trace(Ray ray)
         // Shoot a ray from the hitpoint towards the sun.
         // Use the uniform shadowFactor.
 
-        // Ray shadowRay;
-        // IntersectionResult shadowInter;
+        Ray shadowRay;
+        IntersectionResult shadowInter;
 
-        // shadowRay.origin = inter.hitPosition + EPSILON * inter.normal;
-        // shadowRay.direction = -lightDir;
+        shadowRay.origin = inter.hitPosition + EPSILON * inter.normal;
+        shadowRay.direction = -lightDir;
 
-        // int shadowObjectId = intersectRayScene(shadowRay, shadowInter);
+        int shadowObjectId = intersectRayScene(shadowRay, shadowInter);
 
-        // if(shadowObjectId == -1) {
-        //     color += m.color * 0.1;
-        //     color += light_color * 1.0 * clamp(dot(inter.normal, lightDir), 0.0, 1.0) * nv_clamp;
-        //     color += light_color * 0.7 * pow(clamp(dot(inter.hitPosition, r), 0.0, 1.0), 40);
-        // } else {
-        //     color += (m.color * 0.1) / (shadowFactor + 0.001);
-        // }
+        if(shadowObjectId == -1) {
+            color += m.color * 0.1;
+            color += light_color * 1.0 * clamp(dot(inter.normal, lightDir), 0.0, 1.0) * nv_clamp;
+            color += light_color * 0.7 * pow(clamp(dot(inter.hitPosition, r), 0.0, 1.0), 40);
+        } else {
+            color += (m.color * 0.1) / (shadowFactor + 0.001);
+        }
     }
     else
     {
@@ -195,14 +196,12 @@ void main() {
 	// Use "position" which is passed from the vertex shader.
     Ray primaryRay;
 
-    /*
-    vec3 u = vec3(projMatrix[0][0], projMatrix[0][1], projMatrix[0][2]);
-    vec3 v = vec3(projMatrix[1][0], projMatrix[1][1], projMatrix[1][2]);
-    vec3 w = vec3(projMatrix[2][0], projMatrix[2][1], projMatrix[2][2]);
+    vec3 u = vec3(projView[0][0], projView[0][1], projView[0][2]);
+    vec3 v = vec3(projView[1][0], projView[1][1], projView[1][2]);
+    vec3 w = vec3(projView[2][0], projView[2][1], projView[2][2]);
 
     primaryRay.origin = cameraPos;
     primaryRay.direction = normalize(w + position.x * u + position.y * v);
-    */
 
     // Trace Primary Ray
     out_color = vec4(trace(primaryRay),1);

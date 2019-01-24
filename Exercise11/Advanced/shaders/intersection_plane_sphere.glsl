@@ -8,11 +8,18 @@ IntersectionResult intersectRayPlane(Ray ray, vec4 planeData) {
 	// Have a look at the definition of struct "IntersectionResult" in rt.h.
 	// You can use "EPSILON" defined in rt.glsl.
 
-    //vec3 p = vec3(k) / n;
-    //float t = ((p - ray.origin) / ray.direction).x;
+    vec3 p = n * (1.0 / k);
 
-    //return IntersectionResult(t > 0.0, t, n, p, EPSILON);
-    return IntersectionResult(false, 0, vec3(0), vec3(0), EPSILON);
+    // p.x * n.x + p.y * n.y = k
+    // p.x = ray.origin.x + ray.direction.x * t
+    // p.y = ray.origin.y + ray.direction.y * t
+
+    // p.x = -(p.y * n.y) / n.x;
+    // t = (p.y - ray.origin.y) / ray.direction.y
+    // -(p.y * n.y) = ray.origin.x + ray.direction.x ((p.y - ray.origin.y) / ray.direction.y)
+
+    //p.y * n.y = -(ray.origin.x + ray.direction)
+    return IntersectionResult(false, t, n, vec3(0.0), EPSILON);
 
 }
 
@@ -27,17 +34,30 @@ IntersectionResult intersectRaySphere(Ray ray, vec4 sphereData) {
 	// Note that t has to be positive for the sphere to be in front of the camera:
 	// Make sure that you cannot see objects behind the camera.
 
-    //vec3 pc2 = abs(p) * abs(p) + 2 * (p * (-c)) + abs(-c) * abs(-c)
+    vec3 l = ray.origin - c;
+    float b_a = dot(ray.direction, ray.direction);
+    float b_b = 2 * dot(ray.direction, l);
+    float b_c = dot(l, l) - r * r;
+    float b_d = b_b * b_b - 4 * b_a * b_c;
+    float t1, t2;
+    vec3 p;
 
-    //vec3 b_a = 1;
-    //vec3 b_b = 2 * (-c);
-    //vec3 b_c = (abs(-c) * abs(-c)) - (r * r);
-    //vec3 p1 = (-b_b + sqrt(b_b * b_b - 4 * b_a * b_c)) / 2 * b_a;
-    //vec3 p2 = (-b_b - sqrt(b_b * b_b - 4 * b_a * b_c)) / 2 * b_a;
-    //float t1 = ((p1 - ray.origin) / ray.direction).x;
-    //float t2 = ((p2 - ray.origin) / ray.direction).x;
+    if(b_d == 0.0) {
+        t1 = t2 = -0.5 * b_b / b_a;
+    } else {
+        float q = (b_b > 0) ? -0.5 * (b_b + sqrt(b_d)) :
+                              -0.5 * (b_b - sqrt(b_d));
 
-    //return IntersectionResult(t1 > 0.0 || t2 > 0.0, min(t1, t2), n, p, EPSILON);
-    return IntersectionResult(false, 0, vec3(0), vec3(0), EPSILON);
+        t1 = q / b_a;
+        t2 = b_c / q;
+    }
+
+    if(t2 > 0.0 && t2 < t1) {
+        t1 = t2;
+    }
+
+    p = ray.origin + ray.direction * t1;
+
+    return IntersectionResult(b_d >= 0.0 && t1 > 0.0, t1, c, p, EPSILON);
 
 }
