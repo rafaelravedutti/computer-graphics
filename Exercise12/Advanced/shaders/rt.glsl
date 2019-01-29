@@ -188,7 +188,7 @@ vec3 trace(Ray primaryRay)
         node = pop();
 
         if(node.intensity < INTENSITY_EPSILON || node.depth > maxDepth) {
-            break;
+            continue;
         }
 
         // Compute intersection of the current ray
@@ -246,17 +246,35 @@ vec3 trace(Ray primaryRay)
 
 
 			//======= Reflection =======
-            // TODO 12.2 e)
-            // Compute reflected ray.
-            // Create a "TraceNode" and push it on the stack
+            Ray reflectedRay;
 
+            reflectedRay.direction = reflect(node.ray.direction, N);
+            reflectedRay.origin = inter.hitPosition + EPSILON * reflectedRay.direction;
 
+            TraceNode reflectedNode;
 
+            reflectedNode.ray = reflectedRay;
+            reflectedNode.depth = node.depth + 1;
+            reflectedNode.intensity = R;
+
+            push(reflectedNode);
 
 			//======= Transmission =======
-            // TODO 12.2 f)
-            // Compute refracted ray.
-            // Create a "TraceNode" and push it on the stack
+            Ray refractedRay;
+
+            refractedRay.direction = refract(node.ray.direction, N, n1 / n2);
+            refractedRay.origin = inter.hitPosition + EPSILON * refractedRay.direction;
+
+            TraceNode refractedNode;
+
+            refractedNode.ray = refractedRay;
+            refractedNode.depth = node.depth + 1;
+            refractedNode.intensity = T;
+
+            if(length(reflectedRay.direction) >= EPSILON) {
+                push(refractedNode);
+            }
+
 
 
 
