@@ -1,0 +1,5 @@
+/home/cip/2018/az16ahoq/computer-graphics/Exercise12/Advanced/build/CMakeFiles/rebuild_cache.dir
+/home/cip/2018/az16ahoq/computer-graphics/Exercise12/Advanced/build/CMakeFiles/edit_cache.dir
+/home/cip/2018/az16ahoq/computer-graphics/Exercise12/Advanced/build/src/CMakeFiles/rebuild_cache.dir
+/home/cip/2018/az16ahoq/computer-graphics/Exercise12/Advanced/build/src/CMakeFiles/edit_cache.dir
+/home/cip/2018/az16ahoq/computer-graphics/Exercise12/Advanced/build/src/CMakeFiles/cg.dir

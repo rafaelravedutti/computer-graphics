@@ -73,12 +73,25 @@ layout (location = 0) out vec4 out_color;
 
 float fresnel(float n1, float n2, float cosThetaI)
 {
+    float sinThetaI = sqrt(1.0 - cosThetaI * cosThetaI);
 
-    // TODO 12.2 b)
-    // Compute the reflectance with the fresnel equation.
-    // Handle total internal reflection!
-    return 1;
+    float q = ((n1 / n2) * sinThetaI);
+    q = q * q;
+    q = 1 - q;
 
+    if(q < 0.0) {
+        return 1.0;
+    }
+
+    float rs_term1 = n1 * cosThetaI;
+    float rs_term2 = n2 * sqrt(q);
+    float rs = (rs_term1 - rs_term2) / (rs_term1 + rs_term2);
+
+    float rp_term1 = n1 * sqrt(q);
+    float rp_term2 = n2 * cosThetaI;
+    float rp = (rp_term1 - rp_term2) / (rp_term1 + rp_term2);
+
+    return 0.5 * (rs * rs + rp * rp);
 }
 
 
@@ -160,22 +173,23 @@ vec3 trace(Ray primaryRay)
     int stackSize = 0;
     TraceNode stack[MAX_STACK_SIZE];
 
-    // TODO 12.2 a)
-    // Push primaryRay to stack
+    TraceNode primaryNode;
 
+    primaryNode.ray = primaryRay;
+    primaryNode.intensity = 1.0;
+    primaryNode.depth = 0;
+
+    push(primaryNode);
 
     while(stackSize > 0)
     {
-        // TODO 12.2 a)
-        // Pop top node from stack
         TraceNode node;
 
-        // TODO 12.2 a)
-        // Already termination
-        // - if intensity < INTENSITY_EPSILON
-        // - if depth > maxDepth
+        node = pop();
 
-
+        if(node.intensity < INTENSITY_EPSILON || node.depth > maxDepth) {
+            break;
+        }
 
         // Compute intersection of the current ray
         IntersectionResult inter;
@@ -196,22 +210,26 @@ vec3 trace(Ray primaryRay)
 
             vec3 N = normalize(inter.normal);
 
-            // TODO 12.2 c)
-            // - Compute cosTheta
-            // - Check for an inner collision and handle it accordingly
-			// - in case of inner collision, do not forget to set m.glass to 1
             float cosTheta;
 
+            cosTheta = dot(-node.ray.direction, N);
+
+            if(cosTheta < 0.0) {
+                float nswap = n1;
+                n1 = n2;
+                n2 = nswap;
+
+                m.glass = 1.0;
+
+                N = -N;
+                cosTheta = dot(-node.ray.direction, N);
+            }
 
 
-
-            // TODO 12.2 d)
-            // Compute the weights R, T, and D
-            // Use the function "fresnel".
-            // Note: The glass coefficient is stored in the material "m.glass"
-            float R = 0;
-            float T = 0;
-            float D = 1;
+            float fresnel_result = fresnel(n1, n2, cosTheta);
+            float R = node.intensity * fresnel_result;
+            float T = node.intensity * m.glass * (1 - fresnel_result);
+            float D = node.intensity * (1 - m.glass) * (1 - fresnel_result);
 
 
 
