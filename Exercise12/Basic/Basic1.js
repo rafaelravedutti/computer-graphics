@@ -85,24 +85,37 @@ Line.prototype.draw = function (context) {
 function Object(primitives) {
     this.primitives = primitives;
 
-
-    // TODO 12.1 a)     Compute the axis-aligned bounding box
-    //                  for the object. The box should be defined by 
+    // 12.1 a)     Compute the axis-aligned bounding box
+    //                  for the object. The box should be defined by
     //                  its bottom left (smallest x- and y-value) and
     //                  its top right corner (highest x- and y-value).
 
     // 1. Compute the axis-aligned bounding box!
     //    Replace the following dummy line.
-    this.aabb = []; // should be in this format: [[x, y], [x, y]] - [bottom left corner, top right corner]
+    var coord_x = []
+    var coord_y = []
+    for(let i = 0; i < primitives.length; ++i){
+      coord_x.push(primitives[i].p0[0])
+      coord_x.push(primitives[i].p1[0])
+      coord_y.push(primitives[i].p0[1])
+      coord_y.push(primitives[i].p1[1])
+    }
 
+    var minx = Math.min.apply(null, coord_x), maxx = Math.max.apply(null, coord_x);
+    var miny = Math.min.apply(null, coord_y), maxy = Math.max.apply(null, coord_y);
+
+    // should be in this format: [[x, y], [x, y]] - [bottom left corner, top right corner]
+    this.aabb = [[minx, miny], [maxx, maxy]];
 
     // 2. Compute the primitives to graphically represent the
     //    bounding box as "Line"s. Use the given color.
-    var color = [0.1, 0.1, 0.1];
-    this.aabb_primitives = [];
-
-
-
+    var color = [0.1, 0.1, 0.1]
+    this.aabb_primitives = [
+      new Line([minx, miny], [maxx, miny], color),
+      new Line([minx, miny], [minx, maxy], color),
+      new Line([maxx, miny], [maxx, maxy], color),
+      new Line([minx, maxy], [maxx, maxy], color)
+    ];
 }
 
 Object.prototype.draw = function (context) {
@@ -169,14 +182,14 @@ function KDTree(objects) {
     var stack = [];
     stack.push(this.root);
 
-    // As long as the stack is not empty, this loop pops nodes 
+    // As long as the stack is not empty, this loop pops nodes
     // from the stack.
     while (stack.length != 0) {
         var node = stack.pop();
 
 
-        // TODO 12.1 b)     Build the kd-tree structure by
-        //                  splitting nodes which contain 
+        // 12.1 b)     Build the kd-tree structure by
+        //                  splitting nodes which contain
         //                  too many triangles.
 
         if (node.objects.length > 3) { // The node needs to be split.
@@ -185,15 +198,22 @@ function KDTree(objects) {
             node.isInner = true;
 
             // 1. Compute the split position (x value for split along x axis,
-            //    y value for split along y axis). 
-            //    You can use the functions sort_along_x() and sort_along_y() 
+            //    y value for split along y axis).
+            //    You can use the functions sort_along_x() and sort_along_y()
             //    in order to get a sorted copy of the objects in the node.
-            //    Use the objects' bounding boxes to choose the right split 
+            //    Use the objects' bounding boxes to choose the right split
             //    position!
+            var ordered_objects;
+
+            var median = Math.floor(node.objects.length/2) - 1;
             if (node.splitAxis == 'x') {
-                // ...
+                ordered_objects = sort_along_x(node.objects);
+                node.splitPosition = (ordered_objects[median].aabb[1][0] +
+                ordered_objects[median+1].aabb[0][0])/2;
             } else {
-                // ...
+                ordered_objects = sort_along_y(node.objects);
+                node.splitPosition = (ordered_objects[median].aabb[1][1] +
+                ordered_objects[median+1].aabb[0][1])/2;
             }
 
             // 2. Iterate over the objects in the node and assign them to
@@ -207,9 +227,30 @@ function KDTree(objects) {
             for (var i = 0; i < node.objects.length; i++) {
                 var obj = node.objects[i];
                 if (node.splitAxis == 'x') {
-                    // ...
+                  // totally to the left
+                  if(obj.aabb[1][0] < node.splitPosition){
+                    objectsLeft.push(obj)
+                  }
+                  // totally to the right
+                  else if (obj.aabb[0][0] >  node.splitPosition){
+                    objectsRight.push(obj);
+                  }
+                  // halfed
+                  else {
+                    objectsLeft.push(obj);
+                    objectsRight.push(obj);
+                   }
                 } else {
-                    // ...
+                  if(obj.aabb[1][1] < node.splitPosition){
+                    objectsLeft.push(obj)
+                  }
+                  else if(obj.aabb[0][1] > node.splitPosition){
+                    objectsRight.push(obj)
+                  }
+                  else{
+                    objectsLeft.push(obj);
+                    objectsRight.push(obj);
+                  }
                 }
             }
             node.objects = null;
@@ -220,11 +261,15 @@ function KDTree(objects) {
             var leftChild;
             var rightChild;
             if (node.splitAxis == 'x') {
-                // ...
+                leftChild = new Node(false, objectsLeft, node.min, [node.splitPosition, node.max[1]], 'y');
+                rightChild = new Node(false, objectsRight, [node.splitPosition, node.min[1]], node.max, 'y');
             } else {
-                // ...
+                leftChild = new Node(false, objectsLeft, node.min, [node.max[0], node.splitPosition], 'x');
+                rightChild = new Node(false, objectsRight, [node.min[0], node.splitPosition], node.max, 'x');
             }
-            // ...
+            node.children = [leftChild, rightChild];
+            stack.push(leftChild);
+            stack.push(rightChild);
         }
     }
 
