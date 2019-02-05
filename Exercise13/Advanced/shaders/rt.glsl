@@ -141,24 +141,18 @@ uint seed = 123456789;
 
 uint xorshift32()
 {
+    seed ^= seed << 13;
+    seed ^= seed >> 17;
+    seed ^= seed << 5;
 
-    // TODO 13.4 a)
-    // Pseudorandom number generator with xor shift.
-    // Use the global variable "seed".
     return seed;
-
-
 }
 
 float rand()
 {
-
-    // TODO 13.4 a)
-    // Convert random uint value to a floating point in the range [0,1]
     uint u = xorshift32();
-    return 0;
 
-
+    return float(u) / (0xffffffffU);
 }
 
 
@@ -188,29 +182,31 @@ vec3 trace(Ray ray)
 
         vec3 N = normalize(inter.normal);
 
-        // TODO 13.4 c)
-        // Create a loop that samples the light "lightSamples" times and averages the color.
-        // Compute a random position on the light and store it in "lightSample".
-        // You have to use the function rand() and the uniforms lightPos and lightSize.
+        for(int i = 0; i < lightSamples; ++i) {
+          vec2 offset_vector = vec2(
+            rand() * 2.0 * float(lightSize) - float(lightSize),
+            rand() * 2.0 * float(lightSize) - float(lightSize)
+          );
 
-        vec3 lightSample = lightPos;
+          vec3 lightSample = lightPos;
 
-        vec3 l = normalize(lightSample-inter.hitPosition);
-        vec3 v = normalize(cameraPos - inter.hitPosition);
-        vec3 r = normalize(2.0 * dot(N, l) * N - l);
-        vec3 diff = max(0.0, dot(N, l)) * m.color;
+          lightSample.x += offset_vector.x;
+          lightSample.z += offset_vector.y;
 
-        vec3 dir = normalize(lightSample-inter.hitPosition);
-        Ray shadowRay = Ray(inter.hitPosition + inter.epsilon * N, dir);
-        IntersectionResult inter2;
-        int ob = intersectRayScene(shadowRay,inter2);
-        float s = ob == LIGHT || ob == -1 ? 1 : 0;
-        vec3 c = diff * s;
+          vec3 l = normalize(lightSample-inter.hitPosition);
+          vec3 v = normalize(cameraPos - inter.hitPosition);
+          vec3 r = normalize(2.0 * dot(N, l) * N - l);
+          vec3 diff = max(0.0, dot(N, l)) * m.color;
 
-        color += c;
+          vec3 dir = normalize(lightSample-inter.hitPosition);
+          Ray shadowRay = Ray(inter.hitPosition + inter.epsilon * N, dir);
+          IntersectionResult inter2;
+          int ob = intersectRayScene(shadowRay,inter2);
+          float s = ob == LIGHT || ob == -1 ? 1 : 0;
+          vec3 c = diff * s;
 
-
-
+          color += c / lightSamples;
+      }
     }
 
     return color;
@@ -220,11 +216,10 @@ vec3 trace(Ray ray)
 void main() {
 
 
-    // TODO 13.4 b)
-    // Compute a random seed for every fragment
-    // Use gl_FragCoord.
     //seed = 3520394563245;
-	  seed = 123456789;
+	  //seed = 123456789;
+
+    seed = uint(gl_FragCoord.y) * 15485863U + uint(gl_FragCoord.x) * 7919U;
 
     vec3 color = vec3(0);
     vec2 sampleOffset = vec2(0);
