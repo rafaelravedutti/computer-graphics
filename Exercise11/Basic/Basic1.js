@@ -88,27 +88,44 @@ Ray.prototype.eval = function (t) {
 
 Ray.prototype.reflect = function (intersection) {
 
-    // TODO 11.1c)   Implement the reflection function for perfect diffuse and perfect reflecting material.
+    // 11.1c)   Implement the reflection function for perfect diffuse and perfect reflecting material.
     //              Make use of the attributes of the intersection (see definition above).
 
     switch (intersection.material.type) {
         case 1: // perfect mirror
             {
-                // TODO: Reflect the ray perfectly!
+                // Reflect the ray perfectly!
                 // ...
-                // return new Ray(intersection.point, reflectedDir, this.generation + 1);
+                // this.color = color;
+                // this.type = type; // 1: perfect mirror, 2: perfect diffuse
+                // this.args = args;
+                // r=d−2(d⋅n)n
+                var d = vec2.fromValues(this.p0[0] + intersection.t_ray*this.dir[0], this.p0[1] + intersection.t_ray*this.dir[1])
+                var parcel = vec2.create()
+                var n = intersection.normal
+                vec2.scale(parcel, 2*vec2.dot(d, n),n)
+                var result = vec2.create()
+                vec2.sub(result, d, parcel)
+                return new Ray(intersection.point, result, this.generation + 1);
 
             }
             break;
         case 2: // perfect diffuse
             {
-                // TODO: Reflect the ray to a random direction in the hemisphere around the intersection normal!
+                // Reflect the ray to a random direction in the hemisphere around the intersection normal!
                 // Hint: - Use Math.random() to generate a random number.
                 //       - To sample a direction in the hemisphere around the normal,
                 //         you can rotate the normal with a random angle between [-PI/2, +PI/2].
                 //         To do so you can use mat2.fromRotation(...) and vec2.transformMat2(...)!
                 // ...
-                // return new Ray(intersection.point, reflectedDir, this.generation + 1);
+                let max = Math.PI/2.0
+                let min = -Math.PI/2.0
+                var random = Math.random() * (max - min) + min;
+                var matrix = mat2.create()
+                mat2.fromRotation(matrix, random)
+                var diffuseDir = vec2.create()
+                vec2.transformMat2(diffuseDir, intersection.normal, matrix)
+                return new Ray(intersection.point, diffuseDir, this.generation + 1);
 
 
             }
@@ -173,15 +190,61 @@ Line.prototype.normal = function () {
 Line.prototype.intersect = function (ray) {
     var result = null;
 
-    var lineDir = this.direction();
-    if (!isVec2Parallel(lineDir, ray.dir)) {
+    function almostEqual(a, b){
+      return Math.abs(a - b) < Number.EPSILON
+    }
 
+    function isOnLine(x, y, endx, endy, px, py) {
+      var f = function(somex) { return (endy - y) / (endx - x) * (somex - x) + y; };
+      return Math.abs(f(px) - py) < Number.EPSILON // tolerance, rounding errors
+          && px >= x && px <= endx;      // are they also on this segment?
+      }
+
+    var lineDir = this.direction();
+
+    if (!isVec2Parallel(lineDir, ray.dir)) {
         // TODO 11.1b)   Intersect the ray with the line.
         //              If there is an intersection, return an Intersection "object",
         //              e.g. result = new Intersection(t_intersect, this.material, this.normal(), intersectionPoint);!
         //              Only handle the case where you have a single intersection or no intersection (ray is not parallel to line).
 
+        // Not working correctly.
 
+        // x1 and x2 -> eye ray
+        var x1 = ray.p0[0]
+        var y1 = ray.p0[1]
+        var x2 = ray.dir[0]
+        var y2 = ray.dir[1]
+        // x3 and x4 -> line segment
+        var x3 = this.p0[0]
+        var y3 = this.p0[1]
+        var x4 = lineDir[0]
+        var y4 = lineDir[1]
+
+
+        // Check if none of the lines are of length 0
+      	if ((almostEqual(x1, x2) && almostEqual(y1, y2)) || (almostEqual(x3, x4) && almostEqual(y3, y4))) {
+      		console.log("length 0")
+          return result
+      	}
+
+        // will not be zero because parallel lines were tested already
+      	denominator = ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+
+      	let ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / (denominator + 0.0)
+      	let ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / (denominator + 0.0)
+
+        let x = x3 + ub * (x4 - x3)
+        let y = y3 + ub * (y4 - y3)
+
+        // In case the lines intersect, but not in the interval of the line segment.
+      	if (!isOnLine(this.p0[0], this.p0[1], this.p1[0], this.p1[1], x, y)) {
+      		console.log("point is not part of the line segment")
+          return result
+      	}
+
+
+        result = new Intersection(ub, this.material, this.normal(), vec2.fromValues(x, y))
 
     }
 
@@ -526,16 +589,19 @@ var Basic1 = function () {
 
 
             var ray;
-            // TODO 11.1a)   Set up primary ray based on the camera origin (eye) and the current pixel position (pixelPos).
+            // 11.1a)   Set up primary ray based on the camera origin (eye) and the current pixel position (pixelPos).
             //              ray = new Ray(p0, dir);
-
+            let dir = vec2.create()
+            vec2.subtract(dir, pixelPos, eye)
+            vec2.normalize(dir, dir)
+            ray = new Ray(eye, dir)
 
 
             var pixelColor;
-            // TODO 11.1a)   Start ray tracing.
+            // 11.1a)   Start ray tracing.
             //              Use the global variable maxIter and a initial weight of 1.0.
             //              pixelColor = traceRay(context, ...);
-
+            pixelColor =  traceRay(context, ray, 0, maxIter, 1.0)
 
 
 
@@ -557,6 +623,8 @@ var Basic1 = function () {
             context.fill();
         }
     }
+
+
 
     return {
         start: function (_canvas) {
