@@ -124,12 +124,16 @@ int intersectRayScene(Ray ray, out IntersectionResult result)
 
 float halton(int i, int b)
 {
+    float f = 1;
+    float r = 0;
 
-    // TODO 13.3 a)
-    // Compute the i-th number of the base b Halton sequence.
-    return 0;
+    while(i > 0) {
+        f = f / float(b);
+        r = r + f * float(i % b);
+        i = int(floor(float(i) / float(b)));
+    }
 
-
+    return r;
 }
 
 
@@ -220,35 +224,26 @@ void main() {
     // Compute a random seed for every fragment
     // Use gl_FragCoord.
     //seed = 3520394563245;
-	seed = 123456789;
-
-
-
+	  seed = 123456789;
 
     vec3 color = vec3(0);
+    vec2 sampleOffset = vec2(0);
 
+    for(int i = 0; i < pixelSamples; ++i) {
+        sampleOffset = vec2(halton(i, 2), halton(i, 3));
+        sampleOffset.x = (sampleOffset.x * 2.0 - 1.0) / screenSize.x;
+        sampleOffset.y = (sampleOffset.y * 2.0 - 1.0) / screenSize.y;
 
+        // Setup primary ray
+        vec4 wp = inverse(projView) * vec4(position.xy + sampleOffset, position.z, 1);
+        wp = wp / wp.w;
+        Ray primaryRay;
+        primaryRay.origin = cameraPos;
+        primaryRay.direction = normalize(vec3(wp) - cameraPos);
 
-    // TODO 13.3 b)
-    // Create a loop and average "color" over "pixelSamples" iterations.
-    // In each iteration:
-    // - Compute the (2,3) Halton point.
-    // - The sample offset is the Halton point scaled to the range [-1/screenSize,1/screenSize]
-
-	vec2 sampleOffset = vec2(0);
-
-	// Setup primary ray
-	vec4 wp = inverse(projView) * vec4(position.xy + sampleOffset, position.z, 1);
-	wp = wp / wp.w;
-	Ray primaryRay;
-	primaryRay.origin = cameraPos;
-	primaryRay.direction = normalize(vec3(wp) - cameraPos);
-
-	// Trace Primary Ray
-	color = trace(primaryRay);
-
-
-
+        // Trace Primary Ray
+        color += trace(primaryRay) / pixelSamples;
+    }
 
     out_color = vec4(color,1);
     return;
